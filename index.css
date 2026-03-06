@@ -1,0 +1,249 @@
+/* RESET E ESTILOS GLOBAIS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(145deg, #0b3a3f 0%, #1a5c64 100%);
+    color: #e0f2f5;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* HEADER ROMÂNTICO */
+.header {
+    text-align: center;
+    padding: 40px 0 20px;
+    position: relative;
+}
+
+.header h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    color: #ffd966;
+    text-shadow: 3px 3px 0 #0b3a3f;
+    letter-spacing: 2px;
+}
+
+.header p {
+    font-size: 1.3rem;
+    font-style: italic;
+    color: #d4f0f5;
+}
+
+.heart-icon {
+    color: #ff6b9d;
+    font-size: 2.5rem;
+    animation: pulse 1.5s infinite;
+    display: inline-block;
+}
+
+/* SEÇÃO DE MENSAGEM */
+.message {
+    background: rgba(10, 45, 50, 0.7);
+    backdrop-filter: blur(5px);
+    border-radius: 30px;
+    padding: 30px;
+    margin: 30px 0;
+    border: 2px solid #ffd966;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+.message p {
+    font-size: 1.5rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* GRADE DE INSTRUMENTOS */
+.instruments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin: 50px 0;
+}
+
+.instrument-card {
+    background: #0f4a52;
+    border-radius: 20px;
+    padding: 25px 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid #30838c;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.instrument-card:hover {
+    transform: translateY(-10px);
+    border-color: #ffd966;
+    box-shadow: 0 15px 30px rgba(255, 217, 102, 0.2);
+    background: #14656f;
+}
+
+.instrument-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    filter: drop-shadow(2px 4px 6px black);
+}
+
+.instrument-card h3 {
+    font-size: 1.8rem;
+    color: #ffd966;
+    margin-bottom: 10px;
+}
+
+.instrument-card p {
+    color: #cceff5;
+    font-size: 1rem;
+}
+
+/* SEÇÃO DE MÚSICA */
+.music-section {
+    background: #0a3b40;
+    border-radius: 50px 50px 20px 20px;
+    padding: 40px;
+    margin: 40px 0;
+    border-left: 8px solid #ffd966;
+    border-right: 8px solid #ffd966;
+}
+
+.music-section h2 {
+    font-size: 2.5rem;
+    color: #ffd966;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.playlist {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.music-note {
+    background: #1d6a73;
+    padding: 15px 25px;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffd966;
+    border: 2px solid #ffd966;
+    transition: 0.2s;
+    animation: float 3s ease-in-out infinite;
+}
+
+.music-note:nth-child(2) { animation-delay: 0.5s; }
+.music-note:nth-child(3) { animation-delay: 1s; }
+.music-note:nth-child(4) { animation-delay: 1.5s; }
+.music-note:nth-child(5) { animation-delay: 2s; }
+
+.music-note:hover {
+    background: #ffd966;
+    color: #0b3a3f;
+    transform: scale(1.1);
+    cursor: default;
+}
+
+/* QUOTE BOX */
+.quote-box {
+    background: #0b3a3f;
+    padding: 25px;
+    border-radius: 30px;
+    text-align: center;
+    margin: 30px 0;
+    border: 2px solid #30838c;
+}
+
+.quote-text {
+    font-size: 1.8rem;
+    color: #ffd966;
+}
+
+.quote-author {
+    font-size: 1.3rem;
+    margin-top: 10px;
+}
+
+/* CORAÇÕES FLUTUANTES */
+.floating-hearts {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.heart {
+    position: absolute;
+    bottom: 0;
+    color: rgba(255, 107, 157, 0.3);
+    font-size: 1.2rem;
+    animation: rise 8s linear infinite;
+}
+
+/* RODAPÉ */
+.footer {
+    text-align: center;
+    padding: 30px 0 20px;
+    border-top: 2px dashed #30838c;
+    margin-top: 40px;
+    font-size: 1.2rem;
+}
+
+.footer span {
+    color: #ffd966;
+    font-weight: bold;
+}
+
+/* KEYFRAMES (ANIMAÇÕES) */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); text-shadow: 0 0 15px #ff6b9d; }
+    100% { transform: scale(1); }
+}
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes rise {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0.5; }
+    100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 2.2rem;
+    }
+    
+    .message p {
+        font-size: 1.2rem;
+    }
+    
+    .music-section h2 {
+        font-size: 2rem;
+    }
+    
+    .quote-text {
+        font-size: 1.4rem;
+    }
+}
