@@ -1,0 +1,205 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0a0f1e 0%, #0b1a2f 50%, #0a1120 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* ESTRELAS DE FUNDO */
+.estrelas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.estrela {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: brilhar 3s infinite;
+}
+
+@keyframes brilhar {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ESTRELAS CADENTES (DECORAÇÃO) */
+.estrela-cadente {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    box-shadow: 0 0 10px white;
+    animation: cair 3s linear infinite;
+}
+
+@keyframes cair {
+    0% {
+        transform: translateY(-100px) translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) translateX(100px);
+        opacity: 0;
+    }
+}
+
+/* CONTAINER DAS FOTOS */
+.fotos-container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* FOTOS SUBINDO */
+.foto-item {
+    position: absolute;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    animation: subir 15s linear forwards;
+    pointer-events: none;
+    z-index: 2;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.foto-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.foto-item::after {
+    content: '💙';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.5rem;
+    animation: pulsar 2s infinite;
+}
+
+@keyframes subir {
+    0% {
+        transform: translateY(100vh) scale(0.5);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) scale(1.2);
+        opacity: 0;
+    }
+}
+
+@keyframes pulsar {
+    0%, 100% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.2); }
+}
+
+/* MENSAGEM CENTRAL */
+.mensagem-espaco {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    z-index: 3;
+    background: rgba(10, 20, 40, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 30px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    pointer-events: all;
+    max-width: 90%;
+}
+
+.mensagem-espaco h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: #ffd966;
+    text-shadow: 0 0 20px rgba(255, 217, 102, 0.5);
+}
+
+.mensagem-espaco p {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.mensagem-espaco .heart {
+    font-size: 3rem;
+    animation: pulsar 2s infinite;
+}
+
+.botao-voltar {
+    display: inline-block;
+    padding: 15px 30px;
+    background: rgba(26, 92, 100, 0.8);
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    border: 2px solid #ffd966;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.botao-voltar:hover {
+    background: #ffd966;
+    color: #0b3a3f;
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(255, 217, 102, 0.5);
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+    .mensagem-espaco h1 {
+        font-size: 2rem;
+    }
+    
+    .mensagem-espaco p {
+        font-size: 1.2rem;
+    }
+    
+    .botao-voltar {
+        padding: 12px 24px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .foto-item {
+        width: 150px !important;
+        height: 150px !important;
+    }
+    
+    .foto-item img {
+        width: 150px;
+        height: 150px;
+    }
+}

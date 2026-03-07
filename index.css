@@ -106,6 +106,45 @@ body {
     color: #cceff5;
     font-size: 1rem;
 }
+
+/* SEÇÃO DE MÚSICA */
+.music-section {
+    background: #0a3b40;
+    border-radius: 50px 50px 20px 20px;
+    padding: 40px;
+    margin: 40px 0;
+    border-left: 8px solid #ffd966;
+    border-right: 8px solid #ffd966;
+}
+
+.music-section h2 {
+    font-size: 2.5rem;
+    color: #ffd966;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.playlist {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.music-note {
+    background: #1d6a73;
+    padding: 15px 25px;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffd966;
+    border: 2px solid #ffd966;
+    transition: 0.2s;
+    animation: float 3s ease-in-out infinite;
+}
 /* ESTILO PARA OS LINKS DA PLAYLIST */
 .playlist {
     display: flex;
@@ -153,45 +192,6 @@ body {
         padding: 12px 20px;
         font-size: 1rem;
     }
-}
-
-/* SEÇÃO DE MÚSICA */
-.music-section {
-    background: #0a3b40;
-    border-radius: 50px 50px 20px 20px;
-    padding: 40px;
-    margin: 40px 0;
-    border-left: 8px solid #ffd966;
-    border-right: 8px solid #ffd966;
-}
-
-.music-section h2 {
-    font-size: 2.5rem;
-    color: #ffd966;
-    margin-bottom: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-}
-
-.playlist {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-}
-
-.music-note {
-    background: #1d6a73;
-    padding: 15px 25px;
-    border-radius: 50px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #ffd966;
-    border: 2px solid #ffd966;
-    transition: 0.2s;
-    animation: float 3s ease-in-out infinite;
 }
 
 .music-note:nth-child(2) { animation-delay: 0.5s; }
