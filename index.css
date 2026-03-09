@@ -126,6 +126,83 @@ body {
     justify-content: center;
     gap: 15px;
 }
+/* CATEGORIAS DA PLAYLIST */
+.playlist-categoria {
+    margin-bottom: 40px;
+    background: rgba(10, 45, 50, 0.4);
+    border-radius: 30px;
+    padding: 25px 20px;
+    border: 1px solid rgba(255, 217, 102, 0.2);
+}
+
+.playlist-categoria:last-child {
+    margin-bottom: 0;
+}
+
+.categoria-titulo {
+    font-size: 1.8rem;
+    color: #ffd966;
+    text-align: center;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    font-weight: 600;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.categoria-titulo span {
+    font-size: 2rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+.categoria-titulo span:first-child {
+    animation-delay: 0s;
+}
+
+.categoria-titulo span:last-child {
+    animation-delay: 1.5s;
+}
+
+/* AJUSTE NO ESPAÇAMENTO DA PLAYLIST DENTRO DAS CATEGORIAS */
+.playlist-categoria .playlist {
+    gap: 12px;
+}
+
+/* RESPONSIVIDADE PARA AS CATEGORIAS */
+@media (max-width: 768px) {
+    .categoria-titulo {
+        font-size: 1.5rem;
+        gap: 10px;
+    }
+    
+    .categoria-titulo span {
+        font-size: 1.6rem;
+    }
+    
+    .playlist-categoria {
+        padding: 20px 15px;
+        margin-bottom: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .categoria-titulo {
+        font-size: 1.3rem;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .categoria-titulo span {
+        font-size: 1.4rem;
+    }
+    
+    .playlist-categoria {
+        padding: 15px 10px;
+    }
+}
 
 .playlist {
     display: flex;

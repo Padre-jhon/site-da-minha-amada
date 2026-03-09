@@ -39,9 +39,8 @@ function criarEstrelaCadente() {
     }, 5000);
 }
 
-// FOTOS DE VOCÊS (VOCÊ VAI SUBSTITUIR PELAS FOTOS REAIS)
+// COLOQUE AQUI OS LINKS DAS FOTOS DE VOCÊS
 const fotos = [
-    // COLOQUE AQUI OS LINKS DAS FOTOS DE VOCÊS
     'fotos/WhatsApp Image 2026-03-06 at 21.19.32 (3).jpeg',
     'fotos/WhatsApp Image 2026-03-06 at 21.19.32 (4).jpeg',
     'fotos/WhatsApp Image 2026-03-06 at 21.19.32 (5).jpeg',
@@ -58,7 +57,6 @@ const fotos = [
     'fotos/WhatsApp Image 2026-03-06 at 21.19.34 (1).jpeg',
     'fotos/WhatsApp Image 2026-03-06 at 21.19.34 (2).jpeg',
     'fotos/WhatsApp Image 2026-03-06 at 21.19.34.jpeg'
-
 ];
 
 // CRIAR FOTO SUBINDO
@@ -67,13 +65,9 @@ function criarFoto() {
     const fotoItem = document.createElement('div');
     fotoItem.classList.add('foto-item');
     
-    // Tamanho aleatório entre 150px e 250px
-    const tamanho = Math.random() * 100 + 150;
-    fotoItem.style.width = tamanho + 'px';
-    fotoItem.style.height = tamanho + 'px';
-    
-    // Posição horizontal aleatória
-    fotoItem.style.left = Math.random() * 80 + 10 + '%';
+    // Posição horizontal aleatória (entre 5% e 85% pra não encostar nas bordas)
+    const leftPos = Math.random() * 80 + 5;
+    fotoItem.style.left = leftPos + '%';
     
     // Escolher uma foto aleatória
     const fotoIndex = Math.floor(Math.random() * fotos.length);
@@ -82,13 +76,16 @@ function criarFoto() {
     const img = document.createElement('img');
     img.src = fotos[fotoIndex];
     img.alt = 'Nossa foto';
+    img.loading = 'lazy'; // CARREGA SOB DEMANDA
     
     fotoItem.appendChild(img);
     container.appendChild(fotoItem);
     
     // Remover a foto depois que subir
     setTimeout(() => {
-        fotoItem.remove();
+        if (fotoItem && fotoItem.parentNode) {
+            fotoItem.remove();
+        }
     }, 15000);
 }
 
@@ -99,6 +96,10 @@ window.onload = () => {
     // Criar estrelas cadentes a cada 3 segundos
     setInterval(criarEstrelaCadente, 3000);
     
-    // Criar fotos a cada 2 segundos
-    setInterval(criarFoto, 2000);
+    // Criar fotos a cada 1.5 segundos (mais suave)
+    setInterval(criarFoto, 1500);
+    
+    // GARANTIR QUE NÃO TEM SCROLL
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
 };

@@ -61,23 +61,28 @@ body {
 
 /* CONTAINER DAS FOTOS */
 .fotos-container {
-    position: relative;
+    position: fixed; /* MUDOU de relative pra fixed */
+    top: 0;
+    left: 0;
     width: 100%;
-    min-height: 100vh;
+    height: 100vh;
     z-index: 2;
     pointer-events: none;
+    overflow: hidden; /* IMPEDE BARRA DE ROLAGEM */
 }
 
 /* FOTOS SUBINDO */
 .foto-item {
     position: absolute;
+    width: 200px; /* TAMANHO FIXO */
+    height: 200px; /* TAMANHO FIXO */
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
     animation: subir 15s linear forwards;
     pointer-events: none;
     z-index: 2;
     border: 3px solid rgba(255, 255, 255, 0.3);
-    transition: all 0.3s ease;
+    will-change: transform, opacity; /* OTIMIZA A ANIMAÇÃO */
 }
 
 .foto-item img {
@@ -85,31 +90,36 @@ body {
     height: 100%;
     object-fit: cover;
     border-radius: 12px;
+    display: block; /* REMOVE ESPAÇOS EXTRA */
 }
 
 .foto-item::after {
     content: '💙';
     position: absolute;
-    top: -20px;
+    top: -25px;
     left: 50%;
     transform: translateX(-50%);
     font-size: 1.5rem;
     animation: pulsar 2s infinite;
+    text-shadow: 0 0 10px #ff6b9d;
 }
 
+/* ANIMAÇÃO CORRIGIDA - SEM ZOOM */
 @keyframes subir {
     0% {
-        transform: translateY(100vh) scale(0.5);
+        transform: translateY(100vh) translateX(0) scale(0.8);
         opacity: 0;
     }
-    20% {
+    10% {
         opacity: 1;
+        transform: translateY(80vh) translateX(0) scale(1);
     }
     80% {
         opacity: 1;
+        transform: translateY(20vh) translateX(0) scale(1);
     }
     100% {
-        transform: translateY(-100px) scale(1.2);
+        transform: translateY(-100px) translateX(0) scale(0.9);
         opacity: 0;
     }
 }
@@ -119,7 +129,8 @@ body {
     50% { transform: translateX(-50%) scale(1.2); }
 }
 
-/* MENSAGEM CENTRAL */
+/* MENSAGEM CENTRAL - CORRIGIDA */
+/* MENSAGEM CENTRAL - CORRIGIDA E OTIMIZADA */
 .mensagem-espaco {
     position: fixed;
     top: 50%;
@@ -127,79 +138,161 @@ body {
     transform: translate(-50%, -50%);
     text-align: center;
     color: white;
-    z-index: 3;
-    background: rgba(10, 20, 40, 0.6);
+    z-index: 10;
+    background: rgba(10, 20, 40, 0.75);
     backdrop-filter: blur(10px);
-    padding: 40px;
-    border-radius: 30px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    padding: 40px 30px;
+    border-radius: 40px;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    width: 90%;
+    max-width: 650px;
     pointer-events: all;
-    max-width: 90%;
+    animation: surgir 1s ease;
+}
+
+@keyframes surgir {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
 }
 
 .mensagem-espaco h1 {
-    font-size: 3rem;
-    margin-bottom: 20px;
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    margin-bottom: 15px;
     color: #ffd966;
-    text-shadow: 0 0 20px rgba(255, 217, 102, 0.5);
+    text-shadow: 0 0 15px rgba(255, 217, 102, 0.5);
+    font-weight: 700;
+    line-height: 1.2;
 }
 
 .mensagem-espaco p {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-    color: white;
+    font-size: clamp(1.1rem, 4vw, 1.6rem);
+    margin-bottom: 15px;
+    color: #ffffff;
+    opacity: 0.9;
+    line-height: 1.5;
 }
 
-.mensagem-espaco .heart {
-    font-size: 3rem;
-    animation: pulsar 2s infinite;
+/* CONTAINER DO CORAÇÃO */
+.heart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0 25px;
 }
 
+.heart {
+    font-size: 3.5rem;
+    display: inline-block;
+    animation: pulseHeart 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 15px #ff6b9d);
+    line-height: 1;
+}
+
+@keyframes pulseHeart {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+/* BOTÃO VOLTAR MELHORADO */
 .botao-voltar {
     display: inline-block;
-    padding: 15px 30px;
-    background: rgba(26, 92, 100, 0.8);
+    padding: 14px 35px;
+    background: linear-gradient(145deg, #1a5c64, #0f3f45);
     color: white;
     text-decoration: none;
-    border-radius: 50px;
-    font-size: 1.2rem;
+    border-radius: 60px;
+    font-size: clamp(1rem, 3.5vw, 1.2rem);
+    font-weight: 500;
     border: 2px solid #ffd966;
-    transition: all 0.3s ease;
-    margin-top: 20px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-top: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.5px;
 }
 
 .botao-voltar:hover {
     background: #ffd966;
     color: #0b3a3f;
-    transform: scale(1.1);
-    box-shadow: 0 0 30px rgba(255, 217, 102, 0.5);
+    transform: scale(1.05) translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 217, 102, 0.4);
+    border-color: #0b3a3f;
 }
 
-/* RESPONSIVIDADE */
-@media (max-width: 768px) {
-    .mensagem-espaco h1 {
-        font-size: 2rem;
+/* LINHA DECORATIVA */
+.divider {
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #ffd966, #ff6b9d, #ffd966, transparent);
+    margin: 15px auto;
+    border-radius: 10px;
+}
+
+/* RESPONSIVIDADE FINA */
+@media (max-width: 600px) {
+    .mensagem-espaco {
+        padding: 30px 20px;
+        border-radius: 30px;
+        width: 92%;
     }
     
-    .mensagem-espaco p {
-        font-size: 1.2rem;
+    .heart {
+        font-size: 2.8rem;
     }
     
     .botao-voltar {
-        padding: 12px 24px;
-        font-size: 1rem;
+        padding: 12px 28px;
+        width: auto;
+        min-width: 200px;
     }
 }
 
-@media (max-width: 480px) {
-    .foto-item {
-        width: 150px !important;
-        height: 150px !important;
+@media (max-width: 380px) {
+    .mensagem-espaco {
+        padding: 25px 15px;
     }
     
-    .foto-item img {
+    .mensagem-espaco h1 {
+        font-size: 1.8rem;
+    }
+    
+    .heart {
+        font-size: 2.3rem;
+    }
+    
+    .botao-voltar {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+        min-width: 170px;
+    }
+}
+
+    
+    .foto-item {
         width: 150px;
         height: 150px;
     }
+
+
+@media (max-width: 480px) {
+    .foto-item {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+/* PREVINE SCROLL */
+html, body {
+    overflow: hidden;
+    height: 100%;
 }
