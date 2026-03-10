@@ -171,6 +171,316 @@ body {
     text-align: center;
     text-shadow: 0 0 20px rgba(255, 217, 102, 0.5);
 }
+/* BOTÃO PARA FECHAR A CARTA */
+.botao-fechar {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 107, 157, 0.3);
+    border: 2px solid #ffd966;
+    color: #ffd966;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    z-index: 10;
+}
+
+.botao-fechar:hover {
+    background: #ff6b9d;
+    color: white;
+    transform: rotate(90deg) scale(1.1);
+    border-color: white;
+    box-shadow: 0 0 20px rgba(255, 107, 157, 0.5);
+}
+/* SEÇÃO DE SOLOS DE GUITARRA */
+.solos-section {
+    background: rgba(10, 30, 40, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+    padding: 40px;
+    margin: 40px 0;
+    border: 2px solid rgba(255, 217, 102, 0.3);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 1000px;
+}
+
+.solos-titulo {
+    font-size: 2.5rem;
+    color: #ffd966;
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'Dancing Script', cursive;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.solos-titulo span {
+    font-size: 3rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+.solos-titulo span:first-child {
+    animation-delay: 0s;
+}
+
+.solos-titulo span:last-child {
+    animation-delay: 1.5s;
+}
+
+.solos-descricao {
+    text-align: center;
+    font-size: 1.3rem;
+    color: white;
+    margin-bottom: 40px;
+    font-style: italic;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.solos-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.solo-card {
+    background: rgba(26, 92, 100, 0.3);
+    border-radius: 30px;
+    padding: 25px;
+    border: 1px solid rgba(255, 217, 102, 0.2);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.solo-card:hover {
+    transform: translateY(-10px);
+    border-color: #ffd966;
+    box-shadow: 0 20px 30px rgba(255, 217, 102, 0.2);
+    background: rgba(26, 92, 100, 0.5);
+}
+
+.solo-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.solo-icon {
+    font-size: 2.5rem;
+    animation: vibrar 0.5s ease-in-out infinite;
+}
+
+@keyframes vibrar {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    75% { transform: rotate(-5deg); }
+}
+
+.solo-nome {
+    font-size: 1.4rem;
+    color: #ffd966;
+    font-weight: 600;
+}
+
+/* PLAYER DE ÁUDIO PERSONALIZADO */
+.solo-audio-container {
+    margin: 20px 0;
+}
+
+.audio-player {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(10, 30, 40, 0.8);
+    padding: 12px 20px;
+    border-radius: 60px;
+    border: 2px solid #ffd966;
+    transition: all 0.3s ease;
+}
+
+.audio-player:hover {
+    background: rgba(26, 92, 100, 0.9);
+    box-shadow: 0 0 20px rgba(255, 217, 102, 0.3);
+}
+
+.play-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ffd966;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.play-btn:hover {
+    transform: scale(1.1);
+    background: #ff6b9d;
+}
+
+.play-btn:hover .play-icon {
+    color: white;
+}
+
+.play-icon {
+    color: #0b3a3f;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.progress-container {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ffd966, #ff6b9d);
+    border-radius: 10px;
+    transition: width 0.1s linear;
+}
+
+.time-display {
+    color: #ffd966;
+    font-size: 0.9rem;
+    min-width: 45px;
+    text-align: right;
+    font-family: monospace;
+}
+
+.solo-descricao {
+    color: white;
+    font-size: 1rem;
+    font-style: italic;
+    text-align: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed rgba(255, 217, 102, 0.3);
+    opacity: 0.9;
+}
+
+/* RESPONSIVIDADE PARA A SEÇÃO DE SOLOS */
+@media (max-width: 768px) {
+    .solos-section {
+        padding: 30px 20px;
+    }
+    
+    .solos-titulo {
+        font-size: 2rem;
+    }
+    
+    .solos-titulo span {
+        font-size: 2.5rem;
+    }
+    
+    .solos-descricao {
+        font-size: 1.1rem;
+    }
+    
+    .solo-nome {
+        font-size: 1.2rem;
+    }
+    
+    .audio-player {
+        padding: 8px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .solos-section {
+        padding: 20px 15px;
+    }
+    
+    .solos-titulo {
+        font-size: 1.6rem;
+        gap: 8px;
+    }
+    
+    .solos-titulo span {
+        font-size: 2rem;
+    }
+    
+    .solo-card {
+        padding: 20px;
+    }
+    
+    .solo-header {
+        gap: 10px;
+    }
+    
+    .solo-icon {
+        font-size: 2rem;
+    }
+}
+
+/* AJUSTE NO CONTAINER DO TEXTO PARA O BOTÃO FICAR POSICIONADO CORRETAMENTE */
+.texto-declaracao {
+    position: relative; /* NECESSÁRIO PARA O BOTÃO FICAR ABSOLUTO DENTRO */
+    color: white;
+    font-size: 1.3rem;
+    line-height: 1.8;
+    padding-top: 20px; /* ESPAÇO PARA O BOTÃO */
+}
+
+/* ANIMAÇÃO PARA QUANDO FECHAR */
+.texto-escondido.fechando {
+    animation: fechar 0.5s ease forwards;
+}
+
+@keyframes fechar {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+}
+
+/* ANIMAÇÃO PARA O SELO QUANDO REAPARECER */
+.selo.reaparecer {
+    animation: reaparecer 0.8s ease forwards;
+}
+
+@keyframes reaparecer {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
 
 .texto-declaracao p {
     margin-bottom: 25px;
