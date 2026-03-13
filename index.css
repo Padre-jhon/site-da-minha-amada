@@ -153,6 +153,34 @@ body {
     text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
+/* INDICADOR DE CLIQUE NOS CARDS */
+.instrument-card {
+    cursor: pointer; /* MOSTRA QUE É CLICÁVEL */
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.instrument-card:active {
+    transform: scale(0.95); /* EFEITO DE CLIQUE */
+}
+
+/* OPCIONAL: PEQUENA INDICAÇÃO VISUAL */
+.instrument-card::after {
+    content: '🎵';
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+    opacity: 0.3;
+    transition: all 0.3s ease;
+}
+
+.instrument-card:hover::after {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
 .categoria-titulo span {
     font-size: 2rem;
     animation: float 3s ease-in-out infinite;
