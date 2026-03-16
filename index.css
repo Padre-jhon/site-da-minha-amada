@@ -175,6 +175,56 @@ body {
     opacity: 0.3;
     transition: all 0.3s ease;
 }
+/* DESTAQUE PRO BOTÃO DO JOGO */
+.botao-jogo {
+    background: #ff6b9d !important;
+    animation: pulseJogo 2s infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.botao-jogo::before {
+    content: '🎮';
+    position: absolute;
+    left: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.botao-jogo::after {
+    content: '💙';
+    position: absolute;
+    right: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.botao-jogo:hover::before {
+    left: 10px;
+    opacity: 1;
+}
+
+.botao-jogo:hover::after {
+    right: 10px;
+    opacity: 1;
+}
+
+@keyframes pulseJogo {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 20px #ff6b9d;
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 40px #ff6b9d;
+    }
+}
 
 .instrument-card:hover::after {
     opacity: 1;

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Resgate do Amor 💙</title>
+    <link rel="stylesheet" href="jogo.css">
+</head>
+<body>
+    <div class="jogo-container">
+        <!-- TELA INICIAL -->
+        <div class="tela-inicial" id="telaInicial">
+            <h1>💙 Resgate do Amor 💙</h1>
+            <p>Ajude o coração a chegar no boneco triste</p>
+            <div class="instrucoes">
+                <p>👆 Arraste o coração pelo labirinto</p>
+                <p>🎯 5 fases de amor</p>
+                <p>💪 Cada fase mais desafiadora</p>
+            </div>
+            <button class="btn-jogar" id="btnJogar">Começar Jornada 💕</button>
+        </div>
+
+        <!-- TELA DO JOGO -->
+        <div class="tela-jogo" id="telaJogo" style="display: none;">
+            <div class="cabecalho-jogo">
+                <div class="fase">Fase <span id="faseAtual">1</span>/5</div>
+                <div class="vidas">💙 <span id="tentativas">3</span></div>
+            </div>
+            
+            <div class="labirinto-container">
+                <canvas id="labirintoCanvas" class="labirinto-canvas"></canvas>
+            </div>
+            
+            <div class="controles-info">
+                <p>👆 Arraste o coração</p>
+            </div>
+            
+            <button class="btn-reiniciar" id="btnReiniciar">Reiniciar Fase 🔄</button>
+        </div>
+
+        <!-- TELA DE VITÓRIA -->
+        <div class="tela-vitoria" id="telaVitoria" style="display: none;">
+            <h1>🎉 VOCÊ VENCEU! 🎉</h1>
+            <div class="coracoes-vitoria">💙💙💙💙💙</div>
+            <p>O boneco agora está cheio de amor!</p>
+            <p class="mensagem-final">Igual eu quando estou com você</p>
+            <button class="btn-jogar" id="btnJogarNovamente">Jogar Novamente 💕</button>
+            <a href="index.html" class="btn-voltar">Voltar</a>
+        </div>
+
+        <!-- TELA DE GAME OVER -->
+        <div class="tela-gameover" id="telaGameOver" style="display: none;">
+            <h1>😢 Ahh, tente de novo</h1>
+            <p>O amor merece outra chance</p>
+            <button class="btn-jogar" id="btnTentarNovamente">Tentar Novamente 💪</button>
+        </div>
+    </div>
+
+    <script src="jogo.js"></script>
+</body>
+</html>
