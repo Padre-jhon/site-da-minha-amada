@@ -591,3 +591,26 @@ h1 {
     margin: 10px 0 5px;
     font-style: italic;
 }
+/* NO CSS - DESATIVAR SELEÇÃO E MENU */
+* {
+    -webkit-touch-callout: none;  /* DESATIVA MENU NO IPHONE */
+    -webkit-user-select: none;     /* DESATIVA SELEÇÃO NO SAFARI */
+    -khtml-user-select: none;      /* DESATIVA SELEÇÃO */
+    -moz-user-select: none;        /* DESATIVA SELEÇÃO NO FIREFOX */
+    -ms-user-select: none;         /* DESATIVA SELEÇÃO NO IE */
+    user-select: none;             /* DESATIVA SELEÇÃO PADRÃO */
+}
+
+/* GARANTIR QUE BOTÕES NÃO ABREM MENU */
+button {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;    /* MELHORA TOUCH */
+}
+
+/* PERMITIR CLIQUE NORMAL */
+.controle-btn {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}

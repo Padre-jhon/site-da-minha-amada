@@ -1,3 +1,14 @@
+// ========== BLOQUEAR MENUS ==========
+document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    return false;
+});
+
+document.addEventListener('selectstart', (e) => {
+    e.preventDefault();
+    return false;
+});
+
 // CONFIGURAÇÕES
 let faseAtual = 1;
 let pontos = 0;
@@ -18,7 +29,7 @@ let movimentoDireita = false;
 let morto = false;
 let notas = [];
 
-// FASES (MESMO CÓDIGO DE ANTES)
+// FASES (MESMO CÓDIGO)
 const fases = [
     {
         plataformas: [
@@ -130,7 +141,7 @@ const faseSpan = document.getElementById('faseAtual');
 const pontosSpan = document.getElementById('pontos');
 const vidasSpan = document.getElementById('vidas');
 
-// ========== SISTEMA DE ÁUDIO ==========
+// ========== ÁUDIO ==========
 let audioCtx;
 let somNota, somPuloSom, somMoeda;
 
@@ -205,58 +216,56 @@ document.getElementById('btnTentarNovamente').addEventListener('click', (e) => {
     vidas = 3;
 });
 
-// ========== BOTÕES DE CONTROLE - VERSÃO MOBILE ==========
+// ========== BOTÕES DE CONTROLE ==========
 const btnEsquerda = document.getElementById('btnEsquerda');
 const btnDireita = document.getElementById('btnDireita');
 const btnPular = document.getElementById('btnPular');
 
-// ESQUERDA - EVENTOS COMBINADOS
+// BLOQUEAR MENU NOS BOTÕES
+[btnEsquerda, btnDireita, btnPular].forEach(btn => {
+    btn.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        return false;
+    });
+});
+
+// ESQUERDA
 function esquerdaPressionar(e) {
     e.preventDefault();
     movimentoEsquerda = true;
-    console.log('ESQUERDA ATIVO');
 }
 
 function esquerdaSoltar(e) {
     e.preventDefault();
     movimentoEsquerda = false;
-    console.log('ESQUERDA DESATIVO');
 }
 
-// MOUSE
 btnEsquerda.addEventListener('mousedown', esquerdaPressionar);
 btnEsquerda.addEventListener('mouseup', esquerdaSoltar);
 btnEsquerda.addEventListener('mouseleave', esquerdaSoltar);
-
-// TOUCH
 btnEsquerda.addEventListener('touchstart', esquerdaPressionar, { passive: false });
 btnEsquerda.addEventListener('touchend', esquerdaSoltar, { passive: false });
 btnEsquerda.addEventListener('touchcancel', esquerdaSoltar, { passive: false });
 
-// DIREITA - EVENTOS COMBINADOS
+// DIREITA
 function direitaPressionar(e) {
     e.preventDefault();
     movimentoDireita = true;
-    console.log('DIREITA ATIVO');
 }
 
 function direitaSoltar(e) {
     e.preventDefault();
     movimentoDireita = false;
-    console.log('DIREITA DESATIVO');
 }
 
-// MOUSE
 btnDireita.addEventListener('mousedown', direitaPressionar);
 btnDireita.addEventListener('mouseup', direitaSoltar);
 btnDireita.addEventListener('mouseleave', direitaSoltar);
-
-// TOUCH
 btnDireita.addEventListener('touchstart', direitaPressionar, { passive: false });
 btnDireita.addEventListener('touchend', direitaSoltar, { passive: false });
 btnDireita.addEventListener('touchcancel', direitaSoltar, { passive: false });
 
-// ===== PULO COM INDICADOR =====
+// ===== PULO =====
 let indicadorCarga = null;
 
 function criarIndicador() {
@@ -314,7 +323,6 @@ function removerIndicador() {
     }
 }
 
-// PULO - EVENTOS COMBINADOS
 function puloPressionar(e) {
     e.preventDefault();
     if(jogador.noChao && !carregandoPulo && !morto) {
@@ -338,12 +346,9 @@ function puloSoltar(e) {
     }
 }
 
-// MOUSE
 btnPular.addEventListener('mousedown', puloPressionar);
 btnPular.addEventListener('mouseup', puloSoltar);
 btnPular.addEventListener('mouseleave', puloSoltar);
-
-// TOUCH
 btnPular.addEventListener('touchstart', puloPressionar, { passive: false });
 btnPular.addEventListener('touchend', puloSoltar, { passive: false });
 btnPular.addEventListener('touchcancel', puloSoltar, { passive: false });
@@ -430,7 +435,7 @@ function desenharCenario() {
         cenario.appendChild(plataforma);
     }
     
-    // NOTAS MUSICAIS
+    // NOTAS
     for(let i = 0; i < notas.length; i++) {
         if(!notas[i].pega) {
             const nota = document.createElement('div');
@@ -438,10 +443,7 @@ function desenharCenario() {
             nota.id = `nota-${i}`;
             nota.style.left = notas[i].x + 'px';
             nota.style.bottom = (cenario.clientHeight - notas[i].y - 20) + 'px';
-            
-            const emojis = ['🎵', '🎶', '♪', '♫', '♩'];
-            nota.textContent = emojis[i % emojis.length];
-            
+            nota.textContent = ['🎵', '🎶', '♪', '♫', '♩'][i % 5];
             cenario.appendChild(nota);
         }
     }
@@ -455,7 +457,7 @@ function desenharCenario() {
     jogadorEl.textContent = '💙';
     cenario.appendChild(jogadorEl);
     
-    // CORAÇÃO FINAL
+    // CORAÇÃO
     const coracao = document.createElement('div');
     coracao.classList.add('coracao-final');
     coracao.style.left = fase.coracao.x + 'px';
@@ -473,7 +475,6 @@ function verificarNotas() {
                 notas[i].pega = true;
                 pontos += 50;
                 pontosSpan.textContent = pontos;
-                
                 if(somNota) somNota();
                 
                 const notaEl = document.getElementById(`nota-${i}`);
@@ -483,24 +484,8 @@ function verificarNotas() {
                         if(notaEl.parentNode) notaEl.remove();
                     }, 300);
                 }
-                
-                criarParticulasNota(notas[i].x, notas[i].y);
             }
         }
-    }
-}
-
-function criarParticulasNota(x, y) {
-    for(let i = 0; i < 8; i++) {
-        const particula = document.createElement('div');
-        particula.classList.add('particula-nota');
-        particula.style.left = x + 'px';
-        particula.style.bottom = (cenario.clientHeight - y - 10) + 'px';
-        particula.style.setProperty('--dx', (Math.random() - 0.5) * 60 + 'px');
-        particula.style.setProperty('--dy', (Math.random() * -80) + 'px');
-        particula.textContent = ['🎵', '🎶', '♪'][Math.floor(Math.random() * 3)];
-        cenario.appendChild(particula);
-        setTimeout(() => particula.remove(), 500);
     }
 }
 
@@ -535,7 +520,6 @@ function atualizarJogo() {
     
     const fase = fases[faseAtual-1];
     
-    // MOVIMENTO - AGORA FUNCIONA NO MOBILE!
     if(movimentoEsquerda && jogador.x > 10) {
         jogador.x -= 4;
     }
@@ -543,18 +527,15 @@ function atualizarJogo() {
         jogador.x += 4;
     }
     
-    // GRAVIDADE
     jogador.vy += 0.8;
     jogador.y += jogador.vy;
     
-    // COLISÃO
     jogador.noChao = false;
     
     for(let p of fase.plataformas) {
         const platEsq = p.x;
         const platDir = p.x + p.width;
         const platTopo = p.y;
-        
         const jogadorEsq = jogador.x;
         const jogadorDir = jogador.x + jogador.largura;
         const jogadorBase = jogador.y + jogador.altura;
@@ -569,16 +550,13 @@ function atualizarJogo() {
         }
     }
     
-    // VERIFICAR NOTAS
     verificarNotas();
     
-    // CAIU
     if(jogador.y + jogador.altura > 420) {
         morrer();
         return;
     }
     
-    // CORAÇÃO
     if(Math.abs(jogador.x - fase.coracao.x) < 40 &&
        Math.abs(jogador.y - fase.coracao.y) < 40) {
         pontos += 100;
@@ -595,7 +573,6 @@ function atualizarJogo() {
         return;
     }
     
-    // ATUALIZAR
     const jogadorEl = document.getElementById('jogador');
     if(jogadorEl) {
         jogadorEl.style.left = jogador.x + 'px';
@@ -603,5 +580,4 @@ function atualizarJogo() {
     }
 }
 
-// LOOP
 setInterval(atualizarJogo, 33);
