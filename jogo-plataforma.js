@@ -16,9 +16,9 @@ let maxForcaPulo = 15;
 let movimentoEsquerda = false;
 let movimentoDireita = false;
 let morto = false;
-let notas = []; // ARRAY DE NOTAS MUSICAIS
+let notas = [];
 
-// FASES COM NOTAS MUSICAIS
+// FASES (MESMO CÓDIGO DE ANTES)
 const fases = [
     {
         plataformas: [
@@ -29,7 +29,7 @@ const fases = [
             { x: 650, y: 280, width: 150, height: 20 }
         ],
         coracao: { x: 700, y: 240 },
-        notas: [ // NOTAS MUSICAIS DA FASE 1
+        notas: [
             { x: 100, y: 200, pega: false },
             { x: 250, y: 200, pega: false },
             { x: 400, y: 150, pega: false },
@@ -130,7 +130,7 @@ const faseSpan = document.getElementById('faseAtual');
 const pontosSpan = document.getElementById('pontos');
 const vidasSpan = document.getElementById('vidas');
 
-// SONS (usando Web Audio API)
+// ========== SISTEMA DE ÁUDIO ==========
 let audioCtx;
 let somNota, somPuloSom, somMoeda;
 
@@ -138,7 +138,6 @@ function iniciarAudio() {
     try {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
-        // FUNÇÃO PARA CRIAR SOM DE NOTA
         function criarSomNota(frequencia = 523.25, duracao = 0.2) {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
@@ -156,19 +155,17 @@ function iniciarAudio() {
             osc.stop(audioCtx.currentTime + duracao);
         }
         
-        somNota = () => criarSomNota(523.25, 0.2); // DÓ
-        somPuloSom = () => criarSomNota(392.00, 0.1); // SOL
-        somMoeda = () => criarSomNota(659.25, 0.3); // MI
+        somNota = () => criarSomNota(523.25, 0.2);
+        somPuloSom = () => criarSomNota(392.00, 0.1);
+        somMoeda = () => criarSomNota(659.25, 0.3);
     } catch(e) {
         console.log("Áudio não suportado");
-        // FALLBACK: SEM SOM
         somNota = () => {};
         somPuloSom = () => {};
         somMoeda = () => {};
     }
 }
 
-// INICIAR ÁUDIO NO PRIMEIRO CLIQUE
 document.addEventListener('click', () => {
     if(!audioCtx) {
         iniciarAudio();
@@ -208,39 +205,58 @@ document.getElementById('btnTentarNovamente').addEventListener('click', (e) => {
     vidas = 3;
 });
 
-// ========== BOTÕES DE CONTROLE ==========
-document.getElementById('btnEsquerda').addEventListener('mousedown', (e) => {
+// ========== BOTÕES DE CONTROLE - VERSÃO MOBILE ==========
+const btnEsquerda = document.getElementById('btnEsquerda');
+const btnDireita = document.getElementById('btnDireita');
+const btnPular = document.getElementById('btnPular');
+
+// ESQUERDA - EVENTOS COMBINADOS
+function esquerdaPressionar(e) {
     e.preventDefault();
     movimentoEsquerda = true;
-});
+    console.log('ESQUERDA ATIVO');
+}
 
-document.getElementById('btnEsquerda').addEventListener('mouseup', (e) => {
+function esquerdaSoltar(e) {
     e.preventDefault();
     movimentoEsquerda = false;
-});
+    console.log('ESQUERDA DESATIVO');
+}
 
-document.getElementById('btnEsquerda').addEventListener('mouseleave', (e) => {
-    e.preventDefault();
-    movimentoEsquerda = false;
-});
+// MOUSE
+btnEsquerda.addEventListener('mousedown', esquerdaPressionar);
+btnEsquerda.addEventListener('mouseup', esquerdaSoltar);
+btnEsquerda.addEventListener('mouseleave', esquerdaSoltar);
 
-document.getElementById('btnDireita').addEventListener('mousedown', (e) => {
+// TOUCH
+btnEsquerda.addEventListener('touchstart', esquerdaPressionar, { passive: false });
+btnEsquerda.addEventListener('touchend', esquerdaSoltar, { passive: false });
+btnEsquerda.addEventListener('touchcancel', esquerdaSoltar, { passive: false });
+
+// DIREITA - EVENTOS COMBINADOS
+function direitaPressionar(e) {
     e.preventDefault();
     movimentoDireita = true;
-});
+    console.log('DIREITA ATIVO');
+}
 
-document.getElementById('btnDireita').addEventListener('mouseup', (e) => {
+function direitaSoltar(e) {
     e.preventDefault();
     movimentoDireita = false;
-});
+    console.log('DIREITA DESATIVO');
+}
 
-document.getElementById('btnDireita').addEventListener('mouseleave', (e) => {
-    e.preventDefault();
-    movimentoDireita = false;
-});
+// MOUSE
+btnDireita.addEventListener('mousedown', direitaPressionar);
+btnDireita.addEventListener('mouseup', direitaSoltar);
+btnDireita.addEventListener('mouseleave', direitaSoltar);
+
+// TOUCH
+btnDireita.addEventListener('touchstart', direitaPressionar, { passive: false });
+btnDireita.addEventListener('touchend', direitaSoltar, { passive: false });
+btnDireita.addEventListener('touchcancel', direitaSoltar, { passive: false });
 
 // ===== PULO COM INDICADOR =====
-const btnPular = document.getElementById('btnPular');
 let indicadorCarga = null;
 
 function criarIndicador() {
@@ -298,7 +314,8 @@ function removerIndicador() {
     }
 }
 
-btnPular.addEventListener('mousedown', (e) => {
+// PULO - EVENTOS COMBINADOS
+function puloPressionar(e) {
     e.preventDefault();
     if(jogador.noChao && !carregandoPulo && !morto) {
         carregandoPulo = true;
@@ -307,9 +324,9 @@ btnPular.addEventListener('mousedown', (e) => {
         atualizarIndicador(forcaPulo);
         if(somPuloSom) somPuloSom();
     }
-});
+}
 
-btnPular.addEventListener('mouseup', (e) => {
+function puloSoltar(e) {
     e.preventDefault();
     if(carregandoPulo) {
         removerIndicador();
@@ -319,43 +336,22 @@ btnPular.addEventListener('mouseup', (e) => {
         }
         carregandoPulo = false;
     }
-});
+}
 
-btnPular.addEventListener('mouseleave', (e) => {
-    e.preventDefault();
-    if(carregandoPulo) {
-        removerIndicador();
-        carregandoPulo = false;
-    }
-});
+// MOUSE
+btnPular.addEventListener('mousedown', puloPressionar);
+btnPular.addEventListener('mouseup', puloSoltar);
+btnPular.addEventListener('mouseleave', puloSoltar);
 
 // TOUCH
-btnPular.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    if(jogador.noChao && !carregandoPulo && !morto) {
-        carregandoPulo = true;
-        forcaPulo = 5;
-        criarIndicador();
-        atualizarIndicador(forcaPulo);
-        if(somPuloSom) somPuloSom();
-    }
-});
-
-btnPular.addEventListener('touchend', (e) => {
-    e.preventDefault();
-    if(carregandoPulo) {
-        removerIndicador();
-        if(jogador.noChao) {
-            jogador.vy = -forcaPulo;
-            jogador.noChao = false;
-        }
-        carregandoPulo = false;
-    }
-});
+btnPular.addEventListener('touchstart', puloPressionar, { passive: false });
+btnPular.addEventListener('touchend', puloSoltar, { passive: false });
+btnPular.addEventListener('touchcancel', puloSoltar, { passive: false });
 
 // IMPEDIR CLIQUE PADRÃO
 document.querySelectorAll('button').forEach(btn => {
     btn.addEventListener('click', (e) => e.preventDefault());
+    btn.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
 });
 
 // LOOP DE CARREGAMENTO
@@ -379,7 +375,6 @@ function carregarFase(fase) {
     carregandoPulo = false;
     removerIndicador();
     
-    // CARREGAR NOTAS DA FASE
     notas = fases[fase-1].notas.map(nota => ({ ...nota, pega: false }));
     
     jogador = {
@@ -444,8 +439,7 @@ function desenharCenario() {
             nota.style.left = notas[i].x + 'px';
             nota.style.bottom = (cenario.clientHeight - notas[i].y - 20) + 'px';
             
-            // EMOJI DIFERENTE PRA CADA NOTA
-            const emojis = ['🎵', '🎶', '♪', '♫', '♩', '🎵'];
+            const emojis = ['🎵', '🎶', '♪', '♫', '♩'];
             nota.textContent = emojis[i % emojis.length];
             
             cenario.appendChild(nota);
@@ -473,7 +467,6 @@ function desenharCenario() {
 function verificarNotas() {
     for(let i = 0; i < notas.length; i++) {
         if(!notas[i].pega) {
-            // VERIFICAR COLISÃO COM NOTA
             if(Math.abs(jogador.x - notas[i].x) < 30 &&
                Math.abs(jogador.y - notas[i].y) < 30) {
                 
@@ -481,10 +474,8 @@ function verificarNotas() {
                 pontos += 50;
                 pontosSpan.textContent = pontos;
                 
-                // SOM DE NOTA
                 if(somNota) somNota();
                 
-                // EFEITO VISUAL
                 const notaEl = document.getElementById(`nota-${i}`);
                 if(notaEl) {
                     notaEl.style.animation = 'pegarNota 0.3s ease';
@@ -493,7 +484,6 @@ function verificarNotas() {
                     }, 300);
                 }
                 
-                // CRIAR PARTÍCULAS
                 criarParticulasNota(notas[i].x, notas[i].y);
             }
         }
@@ -509,7 +499,6 @@ function criarParticulasNota(x, y) {
         particula.style.setProperty('--dx', (Math.random() - 0.5) * 60 + 'px');
         particula.style.setProperty('--dy', (Math.random() * -80) + 'px');
         particula.textContent = ['🎵', '🎶', '♪'][Math.floor(Math.random() * 3)];
-        particula.style.fontSize = '1rem';
         cenario.appendChild(particula);
         setTimeout(() => particula.remove(), 500);
     }
@@ -546,7 +535,7 @@ function atualizarJogo() {
     
     const fase = fases[faseAtual-1];
     
-    // MOVIMENTO
+    // MOVIMENTO - AGORA FUNCIONA NO MOBILE!
     if(movimentoEsquerda && jogador.x > 10) {
         jogador.x -= 4;
     }
