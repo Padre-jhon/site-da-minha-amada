@@ -8,15 +8,8 @@ botoesControle.forEach(id => {
             e.preventDefault();
             return false;
         });
-        
-        btn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-        }, { passive: false });
     }
 });
-
-// NÃO BLOQUEAR NOS BOTÕES DE NAVEGAÇÃO!
-// Deixar btnJogar, btnReiniciar, etc funcionando normalmente
 
 // CONFIGURAÇÕES
 let faseAtual = 1;
@@ -150,49 +143,7 @@ const faseSpan = document.getElementById('faseAtual');
 const pontosSpan = document.getElementById('pontos');
 const vidasSpan = document.getElementById('vidas');
 
-// ========== ÁUDIO ==========
-let audioCtx;
-let somNota, somPuloSom, somMoeda;
-
-function iniciarAudio() {
-    try {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        function criarSomNota(frequencia = 523.25, duracao = 0.2) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            
-            osc.type = 'sine';
-            osc.frequency.value = frequencia;
-            
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duracao);
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            osc.start();
-            osc.stop(audioCtx.currentTime + duracao);
-        }
-        
-        somNota = () => criarSomNota(523.25, 0.2);
-        somPuloSom = () => criarSomNota(392.00, 0.1);
-        somMoeda = () => criarSomNota(659.25, 0.3);
-    } catch(e) {
-        console.log("Áudio não suportado");
-        somNota = () => {};
-        somPuloSom = () => {};
-        somMoeda = () => {};
-    }
-}
-
-document.addEventListener('click', () => {
-    if(!audioCtx) {
-        iniciarAudio();
-    }
-}, { once: true });
-
-// ========== BOTÕES DE NAVEGAÇÃO (SEM BLOQUEIO) ==========
+// ========== BOTÕES DE NAVEGAÇÃO ==========
 document.getElementById('btnJogar').addEventListener('click', (e) => {
     e.preventDefault();
     telaInicial.style.display = 'none';
@@ -200,11 +151,13 @@ document.getElementById('btnJogar').addEventListener('click', (e) => {
     vidas = 3;
     pontos = 0;
     carregarFase(1);
+    console.log('COMEÇAR CLICADO');
 });
 
 document.getElementById('btnReiniciar').addEventListener('click', (e) => {
     e.preventDefault();
     carregarFase(faseAtual);
+    console.log('REINICIAR CLICADO');
 });
 
 document.getElementById('btnJogarNovamente').addEventListener('click', (e) => {
@@ -225,150 +178,71 @@ document.getElementById('btnTentarNovamente').addEventListener('click', (e) => {
     vidas = 3;
 });
 
-// ========== BOTÕES DE CONTROLE (COM BLOQUEIO) ==========
+// ========== BOTÕES DE CONTROLE - VERSÃO SIMPLES ==========
 const btnEsquerda = document.getElementById('btnEsquerda');
 const btnDireita = document.getElementById('btnDireita');
 const btnPular = document.getElementById('btnPular');
 
-// BLOQUEAR MENU SÓ NOS BOTÕES DE CONTROLE
-if(btnEsquerda) {
-    btnEsquerda.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        return false;
-    });
-}
-
-if(btnDireita) {
-    btnDireita.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        return false;
-    });
-}
-
-if(btnPular) {
-    btnPular.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        return false;
-    });
-}
-
 // ESQUERDA
-function esquerdaPressionar(e) {
+btnEsquerda.addEventListener('click', (e) => {
     e.preventDefault();
+    console.log('CLICOU ESQUERDA');
     movimentoEsquerda = true;
-}
+    setTimeout(() => {
+        movimentoEsquerda = false;
+    }, 100);
+});
 
-function esquerdaSoltar(e) {
+btnEsquerda.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    console.log('TOUCH ESQUERDA');
+    movimentoEsquerda = true;
+});
+
+btnEsquerda.addEventListener('touchend', (e) => {
     e.preventDefault();
     movimentoEsquerda = false;
-}
-
-if(btnEsquerda) {
-    btnEsquerda.addEventListener('mousedown', esquerdaPressionar);
-    btnEsquerda.addEventListener('mouseup', esquerdaSoltar);
-    btnEsquerda.addEventListener('mouseleave', esquerdaSoltar);
-    btnEsquerda.addEventListener('touchstart', esquerdaPressionar, { passive: false });
-    btnEsquerda.addEventListener('touchend', esquerdaSoltar, { passive: false });
-    btnEsquerda.addEventListener('touchcancel', esquerdaSoltar, { passive: false });
-}
+});
 
 // DIREITA
-function direitaPressionar(e) {
+btnDireita.addEventListener('click', (e) => {
     e.preventDefault();
+    console.log('CLICOU DIREITA');
     movimentoDireita = true;
-}
+    setTimeout(() => {
+        movimentoDireita = false;
+    }, 100);
+});
 
-function direitaSoltar(e) {
+btnDireita.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    console.log('TOUCH DIREITA');
+    movimentoDireita = true;
+});
+
+btnDireita.addEventListener('touchend', (e) => {
     e.preventDefault();
     movimentoDireita = false;
-}
+});
 
-if(btnDireita) {
-    btnDireita.addEventListener('mousedown', direitaPressionar);
-    btnDireita.addEventListener('mouseup', direitaSoltar);
-    btnDireita.addEventListener('mouseleave', direitaSoltar);
-    btnDireita.addEventListener('touchstart', direitaPressionar, { passive: false });
-    btnDireita.addEventListener('touchend', direitaSoltar, { passive: false });
-    btnDireita.addEventListener('touchcancel', direitaSoltar, { passive: false });
-}
-
-// ===== PULO =====
-let indicadorCarga = null;
-
-function criarIndicador() {
-    if(indicadorCarga) {
-        indicadorCarga.remove();
-        indicadorCarga = null;
-    }
-    
-    indicadorCarga = document.createElement('div');
-    indicadorCarga.classList.add('indicador-carga-simples');
-    indicadorCarga.id = 'indicadorCarga';
-    document.body.appendChild(indicadorCarga);
-}
-
-function atualizarIndicador(forca) {
-    const barra = document.getElementById('barraCarga');
-    if(barra) {
-        const porcentagem = (forca / maxForcaPulo) * 100;
-        barra.style.width = porcentagem + '%';
-        
-        if(forca < maxForcaPulo * 0.3) {
-            barra.style.backgroundColor = '#ffd966';
-        } else if(forca < maxForcaPulo * 0.6) {
-            barra.style.backgroundColor = '#ffa500';
-        } else {
-            barra.style.backgroundColor = '#ff4444';
-        }
-    }
-}
-
-function removerIndicador() {
-    if(indicadorCarga) {
-        indicadorCarga.remove();
-        indicadorCarga = null;
-    }
-}
-
-function puloPressionar(e) {
+// PULO (SIMPLES)
+btnPular.addEventListener('click', (e) => {
     e.preventDefault();
-    if(jogador.noChao && !carregandoPulo && !morto) {
-        carregandoPulo = true;
-        forcaPulo = 5;
-        criarIndicador();
-        atualizarIndicador(forcaPulo);
-        if(somPuloSom) somPuloSom();
+    console.log('CLICOU PULO');
+    if(jogador.noChao && !morto) {
+        jogador.vy = -12; // PULO FIXO
+        jogador.noChao = false;
     }
-}
+});
 
-function puloSoltar(e) {
+btnPular.addEventListener('touchstart', (e) => {
     e.preventDefault();
-    if(carregandoPulo) {
-        removerIndicador();
-        if(jogador.noChao) {
-            jogador.vy = -forcaPulo;
-            jogador.noChao = false;
-        }
-        carregandoPulo = false;
+    console.log('TOUCH PULO');
+    if(jogador.noChao && !morto) {
+        jogador.vy = -12;
+        jogador.noChao = false;
     }
-}
-
-if(btnPular) {
-    btnPular.addEventListener('mousedown', puloPressionar);
-    btnPular.addEventListener('mouseup', puloSoltar);
-    btnPular.addEventListener('mouseleave', puloSoltar);
-    btnPular.addEventListener('touchstart', puloPressionar, { passive: false });
-    btnPular.addEventListener('touchend', puloSoltar, { passive: false });
-    btnPular.addEventListener('touchcancel', puloSoltar, { passive: false });
-}
-
-// LOOP DE CARREGAMENTO
-setInterval(() => {
-    if(carregandoPulo && forcaPulo < maxForcaPulo && !morto) {
-        forcaPulo += 0.5;
-        atualizarIndicador(forcaPulo);
-    }
-}, 50);
+});
 
 // ========== FUNÇÕES DO JOGO ==========
 function carregarFase(fase) {
@@ -380,8 +254,6 @@ function carregarFase(fase) {
     morto = false;
     movimentoEsquerda = false;
     movimentoDireita = false;
-    carregandoPulo = false;
-    removerIndicador();
     
     notas = fases[fase-1].notas.map(nota => ({ ...nota, pega: false }));
     
@@ -478,14 +350,10 @@ function verificarNotas() {
                 notas[i].pega = true;
                 pontos += 50;
                 pontosSpan.textContent = pontos;
-                if(somNota) somNota();
                 
                 const notaEl = document.getElementById(`nota-${i}`);
                 if(notaEl) {
-                    notaEl.style.animation = 'pegarNota 0.3s ease';
-                    setTimeout(() => {
-                        if(notaEl.parentNode) notaEl.remove();
-                    }, 300);
+                    notaEl.remove();
                 }
             }
         }
@@ -499,11 +367,9 @@ function morrer() {
     vidas--;
     
     if(vidasSpan) vidasSpan.textContent = vidas;
-    removerIndicador();
     
     const jogadorEl = document.getElementById('jogador');
     if(jogadorEl) {
-        jogadorEl.style.animation = 'morrer 0.5s ease';
         jogadorEl.style.opacity = '0';
     }
     
@@ -523,6 +389,7 @@ function atualizarJogo() {
     
     const fase = fases[faseAtual-1];
     
+    // MOVIMENTO
     if(movimentoEsquerda && jogador.x > 10) {
         jogador.x -= 4;
     }
@@ -530,9 +397,11 @@ function atualizarJogo() {
         jogador.x += 4;
     }
     
+    // GRAVIDADE
     jogador.vy += 0.8;
     jogador.y += jogador.vy;
     
+    // COLISÃO
     jogador.noChao = false;
     
     for(let p of fase.plataformas) {
@@ -555,16 +424,17 @@ function atualizarJogo() {
     
     verificarNotas();
     
+    // CAIU
     if(jogador.y + jogador.altura > 420) {
         morrer();
         return;
     }
     
+    // CORAÇÃO
     if(Math.abs(jogador.x - fase.coracao.x) < 40 &&
        Math.abs(jogador.y - fase.coracao.y) < 40) {
         pontos += 100;
         pontosSpan.textContent = pontos;
-        if(somMoeda) somMoeda();
         
         if(faseAtual === fases.length) {
             telaJogo.style.display = 'none';
@@ -576,6 +446,7 @@ function atualizarJogo() {
         return;
     }
     
+    // ATUALIZAR
     const jogadorEl = document.getElementById('jogador');
     if(jogadorEl) {
         jogadorEl.style.left = jogador.x + 'px';
@@ -584,3 +455,5 @@ function atualizarJogo() {
 }
 
 setInterval(atualizarJogo, 33);
+
+console.log('JOGO CARREGADO!');
