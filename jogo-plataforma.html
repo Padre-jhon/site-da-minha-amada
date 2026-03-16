@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Plataforma Espacial 💙</title>
+    <link rel="stylesheet" href="jogo-plataforma.css">
+</head>
+<body>
+    <div class="jogo-container">
+        <!-- TELA INICIAL -->
+        <div class="tela-inicial" id="telaInicial">
+            <h1>🌌 PLATAFORMA ESPACIAL 🌌</h1>
+            <p>Ajude o coração a chegar no amor!</p>
+            <div class="instrucoes">
+                <p>⬅️ ➡️ Andar</p>
+                <p>⬆️ Pular (segura pra carregar)</p>
+                <p>💙 Pegue o coração em cada fase</p>
+                <p>🚀 5 fases espaciais</p>
+            </div>
+            <button class="btn-jogar" id="btnJogar">COMEÇAR 🚀</button>
+        </div>
+
+        <!-- TELA DO JOGO -->
+        <div class="tela-jogo" id="telaJogo" style="display: none;">
+            <div class="cabecalho-jogo">
+                <div class="fase">🌍 FASE <span id="faseAtual">1</span>/5</div>
+                <div class="vidas">💙 <span id="vidas">3</span></div> <!-- ADICIONADO -->
+                <div class="pontos">⭐ <span id="pontos">0</span></div>
+            </div>
+            
+            <!-- CENÁRIO DO JOGO -->
+            <div class="cenario" id="cenario"></div>
+            
+            <!-- CONTROLES -->
+            <div class="controles">
+                <div class="linha-controles">
+                    <button class="controle-btn" id="btnEsquerda">⬅️</button>
+                    <button class="controle-btn" id="btnPular">⬆️</button>
+                    <button class="controle-btn" id="btnDireita">➡️</button>
+                </div>
+            </div>
+            
+            <button class="btn-reiniciar" id="btnReiniciar">REINICIAR FASE 🔄</button>
+        </div>
+
+        <!-- TELA DE VITÓRIA -->
+        <div class="tela-vitoria" id="telaVitoria" style="display: none;">
+            <h1>🎉 VOCÊ VENCEU! 🎉</h1>
+            <div class="coracoes-vitoria">💙💙💙💙💙</div>
+            <p>O coração encontrou o amor!</p>
+            <p class="mensagem-final">Igual eu encontrei você</p>
+            <button class="btn-jogar" id="btnJogarNovamente">JOGAR DE NOVO 🌟</button>
+            <a href="index.html" class="btn-voltar">VOLTAR</a>
+        </div>
+
+        <!-- TELA DE GAME OVER -->
+        <div class="tela-gameover" id="telaGameOver" style="display: none;">
+            <h1>😢 GAME OVER</h1>
+            <p>Você caiu no espaço...</p>
+            <p>Mas o amor sempre dá uma segunda chance!</p>
+            <button class="btn-jogar" id="btnTentarNovamente">TENTAR DE NOVO 💪</button>
+            <a href="index.html" class="btn-voltar">VOLTAR</a>
+        </div>
+    </div>
+
+    <script src="jogo-plataforma.js"></script>
+</body>
+</html>
