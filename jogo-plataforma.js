@@ -30,6 +30,8 @@ let movimentoEsquerda = false;
 let movimentoDireita = false;
 let morto = false;
 let notas = [];
+let cameraX = 0; // POSIÇÃO DA CÂMERA
+let larguraCenario = 900; // LARGURA TOTAL DO CENÁRIO
 
 // FASES
 const fases = [
@@ -143,6 +145,48 @@ const faseSpan = document.getElementById('faseAtual');
 const pontosSpan = document.getElementById('pontos');
 const vidasSpan = document.getElementById('vidas');
 
+// ========== ÁUDIO ==========
+let audioCtx;
+let somNota, somPuloSom, somMoeda;
+
+function iniciarAudio() {
+    try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function criarSomNota(frequencia = 523.25, duracao = 0.2) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.value = frequencia;
+            
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duracao);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + duracao);
+        }
+        
+        somNota = () => criarSomNota(523.25, 0.2);
+        somPuloSom = () => criarSomNota(392.00, 0.1);
+        somMoeda = () => criarSomNota(659.25, 0.3);
+    } catch(e) {
+        console.log("Áudio não suportado");
+        somNota = () => {};
+        somPuloSom = () => {};
+        somMoeda = () => {};
+    }
+}
+
+document.addEventListener('click', () => {
+    if(!audioCtx) {
+        iniciarAudio();
+    }
+}, { once: true });
+
 // ========== BOTÕES DE NAVEGAÇÃO ==========
 document.getElementById('btnJogar').addEventListener('click', (e) => {
     e.preventDefault();
@@ -178,71 +222,167 @@ document.getElementById('btnTentarNovamente').addEventListener('click', (e) => {
     vidas = 3;
 });
 
-// ========== BOTÕES DE CONTROLE - VERSÃO SIMPLES ==========
+// ========== BOTÕES DE CONTROLE ==========
 const btnEsquerda = document.getElementById('btnEsquerda');
 const btnDireita = document.getElementById('btnDireita');
 const btnPular = document.getElementById('btnPular');
 
 // ESQUERDA
-btnEsquerda.addEventListener('click', (e) => {
+btnEsquerda.addEventListener('mousedown', (e) => {
     e.preventDefault();
-    console.log('CLICOU ESQUERDA');
-    movimentoEsquerda = true;
-    setTimeout(() => {
-        movimentoEsquerda = false;
-    }, 100);
-});
-
-btnEsquerda.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    console.log('TOUCH ESQUERDA');
     movimentoEsquerda = true;
 });
 
-btnEsquerda.addEventListener('touchend', (e) => {
+btnEsquerda.addEventListener('mouseup', (e) => {
     e.preventDefault();
     movimentoEsquerda = false;
 });
 
+btnEsquerda.addEventListener('mouseleave', (e) => {
+    e.preventDefault();
+    movimentoEsquerda = false;
+});
+
+btnEsquerda.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    movimentoEsquerda = true;
+}, { passive: false });
+
+btnEsquerda.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    movimentoEsquerda = false;
+}, { passive: false });
+
 // DIREITA
-btnDireita.addEventListener('click', (e) => {
+btnDireita.addEventListener('mousedown', (e) => {
     e.preventDefault();
-    console.log('CLICOU DIREITA');
-    movimentoDireita = true;
-    setTimeout(() => {
-        movimentoDireita = false;
-    }, 100);
-});
-
-btnDireita.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    console.log('TOUCH DIREITA');
     movimentoDireita = true;
 });
 
-btnDireita.addEventListener('touchend', (e) => {
+btnDireita.addEventListener('mouseup', (e) => {
     e.preventDefault();
     movimentoDireita = false;
 });
 
-// PULO (SIMPLES)
-btnPular.addEventListener('click', (e) => {
+btnDireita.addEventListener('mouseleave', (e) => {
     e.preventDefault();
-    console.log('CLICOU PULO');
-    if(jogador.noChao && !morto) {
-        jogador.vy = -12; // PULO FIXO
-        jogador.noChao = false;
+    movimentoDireita = false;
+});
+
+btnDireita.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    movimentoDireita = true;
+}, { passive: false });
+
+btnDireita.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    movimentoDireita = false;
+}, { passive: false });
+
+// ===== PULO COM CARGA =====
+let indicadorCarga = null;
+let intervaloPulo = null;
+
+function criarIndicador() {
+    if(indicadorCarga) {
+        indicadorCarga.remove();
+        indicadorCarga = null;
     }
+    
+    indicadorCarga = document.createElement('div');
+    indicadorCarga.classList.add('indicador-carga-simples');
+    indicadorCarga.id = 'indicadorCarga';
+    document.body.appendChild(indicadorCarga);
+}
+
+function atualizarIndicador(forca) {
+    const indicador = document.getElementById('indicadorCarga');
+    if(indicador) {
+        let barra = indicador.querySelector('#barraCarga');
+        if(!barra) {
+            indicador.innerHTML = '';
+            barra = document.createElement('div');
+            barra.id = 'barraCarga';
+            indicador.appendChild(barra);
+        }
+        
+        const porcentagem = (forca / maxForcaPulo) * 100;
+        barra.style.width = porcentagem + '%';
+        
+        if(forca < maxForcaPulo * 0.3) {
+            barra.style.backgroundColor = '#ffd966';
+        } else if(forca < maxForcaPulo * 0.6) {
+            barra.style.backgroundColor = '#ffa500';
+        } else {
+            barra.style.backgroundColor = '#ff4444';
+        }
+    }
+}
+
+function removerIndicador() {
+    if(indicadorCarga) {
+        indicadorCarga.remove();
+        indicadorCarga = null;
+    }
+    if(intervaloPulo) {
+        clearInterval(intervaloPulo);
+        intervaloPulo = null;
+    }
+}
+
+function comecarCarregarPulo() {
+    if(jogador.noChao && !carregandoPulo && !morto) {
+        carregandoPulo = true;
+        forcaPulo = 5;
+        criarIndicador();
+        atualizarIndicador(forcaPulo);
+        if(somPuloSom) somPuloSom();
+        
+        intervaloPulo = setInterval(() => {
+            if(carregandoPulo && forcaPulo < maxForcaPulo) {
+                forcaPulo += 0.5;
+                atualizarIndicador(forcaPulo);
+            }
+        }, 50);
+    }
+}
+
+function executarPulo() {
+    if(carregandoPulo) {
+        removerIndicador();
+        if(jogador.noChao) {
+            jogador.vy = -forcaPulo;
+            jogador.noChao = false;
+        }
+        carregandoPulo = false;
+    }
+}
+
+// EVENTOS DE PULO
+btnPular.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    comecarCarregarPulo();
+});
+
+btnPular.addEventListener('mouseup', (e) => {
+    e.preventDefault();
+    executarPulo();
+});
+
+btnPular.addEventListener('mouseleave', (e) => {
+    e.preventDefault();
+    executarPulo();
 });
 
 btnPular.addEventListener('touchstart', (e) => {
     e.preventDefault();
-    console.log('TOUCH PULO');
-    if(jogador.noChao && !morto) {
-        jogador.vy = -12;
-        jogador.noChao = false;
-    }
-});
+    comecarCarregarPulo();
+}, { passive: false });
+
+btnPular.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    executarPulo();
+}, { passive: false });
 
 // ========== FUNÇÕES DO JOGO ==========
 function carregarFase(fase) {
@@ -254,6 +394,7 @@ function carregarFase(fase) {
     morto = false;
     movimentoEsquerda = false;
     movimentoDireita = false;
+    cameraX = 0;
     
     notas = fases[fase-1].notas.map(nota => ({ ...nota, pega: false }));
     
@@ -276,7 +417,7 @@ function desenharCenario() {
     
     cenario.className = 'cenario fundo-' + faseAtual;
     
-    // ESTRELAS
+    // ESTRELAS (FUNDO FIXO)
     for(let i = 0; i < 30; i++) {
         const estrela = document.createElement('div');
         estrela.classList.add('estrela');
@@ -288,7 +429,7 @@ function desenharCenario() {
         cenario.appendChild(estrela);
     }
     
-    // PLANETAS
+    // PLANETAS (FUNDO FIXO)
     for(let i = 0; i < 3; i++) {
         const planeta = document.createElement('div');
         planeta.classList.add('planeta');
@@ -299,6 +440,13 @@ function desenharCenario() {
         cenario.appendChild(planeta);
     }
     
+    // CONTAINER PARA ELEMENTOS QUE MOVEM COM CÂMERA
+    const mundoContainer = document.createElement('div');
+    mundoContainer.id = 'mundoContainer';
+    mundoContainer.style.position = 'relative';
+    mundoContainer.style.width = larguraCenario + 'px';
+    mundoContainer.style.height = '100%';
+    
     // PLATAFORMAS
     for(let p of fase.plataformas) {
         const plataforma = document.createElement('div');
@@ -307,7 +455,7 @@ function desenharCenario() {
         plataforma.style.bottom = (cenario.clientHeight - p.y - p.height) + 'px';
         plataforma.style.width = p.width + 'px';
         plataforma.style.height = p.height + 'px';
-        cenario.appendChild(plataforma);
+        mundoContainer.appendChild(plataforma);
     }
     
     // NOTAS
@@ -319,26 +467,38 @@ function desenharCenario() {
             nota.style.left = notas[i].x + 'px';
             nota.style.bottom = (cenario.clientHeight - notas[i].y - 20) + 'px';
             nota.textContent = ['🎵', '🎶', '♪', '♫', '♩'][i % 5];
-            cenario.appendChild(nota);
+            mundoContainer.appendChild(nota);
         }
     }
     
-    // JOGADOR
-    const jogadorEl = document.createElement('div');
-    jogadorEl.classList.add('jogador');
-    jogadorEl.id = 'jogador';
-    jogadorEl.style.left = jogador.x + 'px';
-    jogadorEl.style.bottom = (cenario.clientHeight - jogador.y - jogador.altura) + 'px';
-    jogadorEl.textContent = '💙';
-    cenario.appendChild(jogadorEl);
-    
-    // CORAÇÃO
+    // CORAÇÃO FINAL
     const coracao = document.createElement('div');
     coracao.classList.add('coracao-final');
     coracao.style.left = fase.coracao.x + 'px';
     coracao.style.bottom = (cenario.clientHeight - fase.coracao.y - 40) + 'px';
     coracao.textContent = '💙';
-    cenario.appendChild(coracao);
+    mundoContainer.appendChild(coracao);
+    
+    // JOGADOR (NÃO MOVE COM CÂMERA)
+    const jogadorEl = document.createElement('div');
+    jogadorEl.classList.add('jogador');
+    jogadorEl.id = 'jogador';
+    jogadorEl.style.left = '50px'; // FIXO NA TELA
+    jogadorEl.style.bottom = (cenario.clientHeight - jogador.y - jogador.altura) + 'px';
+    jogadorEl.textContent = '💙';
+    
+    cenario.appendChild(mundoContainer);
+    cenario.appendChild(jogadorEl);
+}
+
+function atualizarCamera() {
+    const mundoContainer = document.getElementById('mundoContainer');
+    if(mundoContainer) {
+        // CENTRALIZAR JOGADOR NA TELA
+        const alvoCamera = jogador.x - 200;
+        cameraX = Math.max(0, Math.min(alvoCamera, larguraCenario - 400));
+        mundoContainer.style.left = -cameraX + 'px';
+    }
 }
 
 function verificarNotas() {
@@ -350,6 +510,7 @@ function verificarNotas() {
                 notas[i].pega = true;
                 pontos += 50;
                 pontosSpan.textContent = pontos;
+                if(somNota) somNota();
                 
                 const notaEl = document.getElementById(`nota-${i}`);
                 if(notaEl) {
@@ -365,11 +526,13 @@ function morrer() {
     
     morto = true;
     vidas--;
+    removerIndicador();
     
     if(vidasSpan) vidasSpan.textContent = vidas;
     
     const jogadorEl = document.getElementById('jogador');
     if(jogadorEl) {
+        jogadorEl.style.animation = 'morrer 0.5s ease';
         jogadorEl.style.opacity = '0';
     }
     
@@ -393,7 +556,7 @@ function atualizarJogo() {
     if(movimentoEsquerda && jogador.x > 10) {
         jogador.x -= 4;
     }
-    if(movimentoDireita && jogador.x < 820) {
+    if(movimentoDireita && jogador.x < larguraCenario - 50) {
         jogador.x += 4;
     }
     
@@ -435,6 +598,7 @@ function atualizarJogo() {
        Math.abs(jogador.y - fase.coracao.y) < 40) {
         pontos += 100;
         pontosSpan.textContent = pontos;
+        if(somMoeda) somMoeda();
         
         if(faseAtual === fases.length) {
             telaJogo.style.display = 'none';
@@ -446,14 +610,16 @@ function atualizarJogo() {
         return;
     }
     
-    // ATUALIZAR
+    // ATUALIZAR CÂMERA
+    atualizarCamera();
+    
+    // ATUALIZAR POSIÇÃO JOGADOR
     const jogadorEl = document.getElementById('jogador');
     if(jogadorEl) {
-        jogadorEl.style.left = jogador.x + 'px';
         jogadorEl.style.bottom = (cenario.clientHeight - jogador.y - jogador.altura) + 'px';
     }
 }
 
 setInterval(atualizarJogo, 33);
 
-console.log('JOGO CARREGADO!');
+console.log('JOGO CARREGADO COM CÂMERA!');

@@ -614,3 +614,44 @@ button {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
 }
+/* CONTAINER DO MUNDO (MOVE COM CÂMERA) */
+#mundoContainer {
+    position: absolute;
+    height: 100%;
+    transition: left 0.1s linear;
+    will-change: transform;
+}
+
+/* AJUSTE NO CENÁRIO */
+.cenario {
+    position: relative;
+    overflow: hidden;
+}
+
+/* JOGADOR FIXO NA TELA */
+.jogador {
+    position: absolute;
+    z-index: 20;
+}
+
+/* INDICADOR DE CARGA */
+.indicador-carga-simples {
+    position: fixed;
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 250px;
+    height: 25px;
+    background: #222;
+    border: 4px solid #ffd966;
+    border-radius: 30px;
+    overflow: hidden;
+    z-index: 9999;
+    box-shadow: 0 0 30px rgba(255, 217, 102, 0.5);
+}
+
+#barraCarga {
+    height: 100%;
+    width: 0%;
+    transition: width 0.05s linear;
+}
