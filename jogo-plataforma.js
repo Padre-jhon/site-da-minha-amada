@@ -30,8 +30,8 @@ let movimentoEsquerda = false;
 let movimentoDireita = false;
 let morto = false;
 let notas = [];
-let offsetCamera = 0; // DESLOCAMENTO DA CÂMERA
-let larguraTotalFase = 900; // LARGURA TOTAL DA FASE
+let offsetCamera = 0;
+let larguraTotalFase = 900;
 
 // FASES
 const fases = [
@@ -195,13 +195,11 @@ document.getElementById('btnJogar').addEventListener('click', (e) => {
     vidas = 3;
     pontos = 0;
     carregarFase(1);
-    console.log('COMEÇAR CLICADO');
 });
 
 document.getElementById('btnReiniciar').addEventListener('click', (e) => {
     e.preventDefault();
     carregarFase(faseAtual);
-    console.log('REINICIAR CLICADO');
 });
 
 document.getElementById('btnJogarNovamente').addEventListener('click', (e) => {
@@ -231,11 +229,13 @@ const btnPular = document.getElementById('btnPular');
 btnEsquerda.addEventListener('mousedown', (e) => {
     e.preventDefault();
     movimentoEsquerda = true;
+    console.log('⬅️ ESQUERDA PRESSIONADO');
 });
 
 btnEsquerda.addEventListener('mouseup', (e) => {
     e.preventDefault();
     movimentoEsquerda = false;
+    console.log('⬅️ ESQUERDA SOLTO');
 });
 
 btnEsquerda.addEventListener('mouseleave', (e) => {
@@ -246,6 +246,7 @@ btnEsquerda.addEventListener('mouseleave', (e) => {
 btnEsquerda.addEventListener('touchstart', (e) => {
     e.preventDefault();
     movimentoEsquerda = true;
+    console.log('⬅️ ESQUERDA TOUCH');
 }, { passive: false });
 
 btnEsquerda.addEventListener('touchend', (e) => {
@@ -257,11 +258,13 @@ btnEsquerda.addEventListener('touchend', (e) => {
 btnDireita.addEventListener('mousedown', (e) => {
     e.preventDefault();
     movimentoDireita = true;
+    console.log('➡️ DIREITA PRESSIONADO');
 });
 
 btnDireita.addEventListener('mouseup', (e) => {
     e.preventDefault();
     movimentoDireita = false;
+    console.log('➡️ DIREITA SOLTO');
 });
 
 btnDireita.addEventListener('mouseleave', (e) => {
@@ -272,6 +275,7 @@ btnDireita.addEventListener('mouseleave', (e) => {
 btnDireita.addEventListener('touchstart', (e) => {
     e.preventDefault();
     movimentoDireita = true;
+    console.log('➡️ DIREITA TOUCH');
 }, { passive: false });
 
 btnDireita.addEventListener('touchend', (e) => {
@@ -358,7 +362,6 @@ function executarPulo() {
     }
 }
 
-// EVENTOS DE PULO
 btnPular.addEventListener('mousedown', (e) => {
     e.preventDefault();
     comecarCarregarPulo();
@@ -398,6 +401,7 @@ function carregarFase(fase) {
     
     notas = fases[fase-1].notas.map(nota => ({ ...nota, pega: false }));
     
+    // JOGADOR REAL COMEÇA NO INÍCIO DA FASE (X = 50)
     jogador = {
         x: 50,
         y: 250,
@@ -408,6 +412,38 @@ function carregarFase(fase) {
     };
     
     desenharCenario();
+    
+    // FORÇAR CÂMERA E SPRITE NO LUGAR CERTO IMEDIATAMENTE!
+    setTimeout(() => {
+        const wrapper = document.getElementById('cenarioWrapper');
+        if(wrapper) {
+            wrapper.style.left = '0px';
+            offsetCamera = 0;
+        }
+        
+        const jogadorEl = document.getElementById('jogador');
+        if(jogadorEl) {
+            const novoBottom = cenario.clientHeight - jogador.y - jogador.altura;
+            jogadorEl.style.bottom = novoBottom + 'px';
+            jogadorEl.style.left = jogador.x + 'px';
+            console.log('🎯 SPRITE POSICIONADO: X=', jogador.x, 'Y=', jogador.y, 'BOTTOM=', novoBottom);
+        }
+    }, 10);
+    
+    // SEGUNDA SINCRONIZAÇÃO PRA GARANTIR
+    setTimeout(() => {
+        const jogadorEl = document.getElementById('jogador');
+        if(jogadorEl) {
+            const novoBottom = cenario.clientHeight - jogador.y - jogador.altura;
+            jogadorEl.style.bottom = novoBottom + 'px';
+            jogadorEl.style.left = jogador.x + 'px';
+        }
+        
+        const wrapper = document.getElementById('cenarioWrapper');
+        if(wrapper) {
+            wrapper.style.left = '0px';
+        }
+    }, 100);
 }
 
 function desenharCenario() {
@@ -441,18 +477,22 @@ function desenharCenario() {
         cenario.appendChild(planeta);
     }
     
-    // WRAPPER DO CENÁRIO QUE VAI SE MOVER
+    // WRAPPER DO CENÁRIO (ISSO QUE VAI SE MOVER)
     const cenarioWrapper = document.createElement('div');
     cenarioWrapper.id = 'cenarioWrapper';
-    cenarioWrapper.style.position = 'relative';
+    cenarioWrapper.style.position = 'absolute';
+    cenarioWrapper.style.bottom = '0';
+    cenarioWrapper.style.left = '0';
     cenarioWrapper.style.width = larguraTotalFase + 'px';
     cenarioWrapper.style.height = '100%';
     cenarioWrapper.style.transition = 'left 0.05s linear';
+    cenarioWrapper.style.willChange = 'left';
     
     // PLATAFORMAS
     for(let p of fase.plataformas) {
         const plataforma = document.createElement('div');
         plataforma.classList.add('plataforma');
+        plataforma.style.position = 'absolute';
         plataforma.style.left = p.x + 'px';
         plataforma.style.bottom = (cenario.clientHeight - p.y - p.height) + 'px';
         plataforma.style.width = p.width + 'px';
@@ -466,6 +506,7 @@ function desenharCenario() {
             const nota = document.createElement('div');
             nota.classList.add('nota-musical');
             nota.id = `nota-${i}`;
+            nota.style.position = 'absolute';
             nota.style.left = notas[i].x + 'px';
             nota.style.bottom = (cenario.clientHeight - notas[i].y - 20) + 'px';
             nota.textContent = ['🎵', '🎶', '♪', '♫', '♩'][i % 5];
@@ -476,38 +517,59 @@ function desenharCenario() {
     // CORAÇÃO FINAL
     const coracao = document.createElement('div');
     coracao.classList.add('coracao-final');
+    coracao.style.position = 'absolute';
     coracao.style.left = fase.coracao.x + 'px';
     coracao.style.bottom = (cenario.clientHeight - fase.coracao.y - 40) + 'px';
     coracao.textContent = '💙';
     cenarioWrapper.appendChild(coracao);
     
-    // JOGADOR (NÃO MOVE COM CÂMERA)
+    // SPRITE DO JOGADOR (CORAÇÃO) - AGORA DENTRO DO WRAPPER!
+    const bottomInicial = cenario.clientHeight - jogador.y - jogador.altura;
+    
     const jogadorEl = document.createElement('div');
     jogadorEl.classList.add('jogador');
     jogadorEl.id = 'jogador';
-    jogadorEl.style.left = '200px'; // POSIÇÃO FIXA NA TELA
-    jogadorEl.style.bottom = (cenario.clientHeight - jogador.y - jogador.altura) + 'px';
+    jogadorEl.style.position = 'absolute';
+    jogadorEl.style.left = jogador.x + 'px'; // USA A POSIÇÃO REAL DO JOGADOR!
+    jogadorEl.style.bottom = bottomInicial + 'px';
+    jogadorEl.style.width = '28px';
+    jogadorEl.style.height = '32px';
+    jogadorEl.style.backgroundColor = '#ff6b9d';
+    jogadorEl.style.border = '3px solid #ffd966';
+    jogadorEl.style.borderRadius = '18px 18px 8px 8px';
+    jogadorEl.style.display = 'flex';
+    jogadorEl.style.alignItems = 'center';
+    jogadorEl.style.justifyContent = 'center';
+    jogadorEl.style.fontSize = '1.3rem';
+    jogadorEl.style.boxShadow = '0 0 30px #ff6b9d, 0 5px 0 #b3456b';
+    jogadorEl.style.zIndex = '20';
+    jogadorEl.style.transition = 'left 0.05s linear, bottom 0.05s linear';
     jogadorEl.textContent = '💙';
     
+    cenarioWrapper.appendChild(jogadorEl); // COLOCA DENTRO DO WRAPPER
     cenario.appendChild(cenarioWrapper);
-    cenario.appendChild(jogadorEl);
+    
+    // CÂMERA COMEÇA NO INÍCIO DA FASE
+    cenarioWrapper.style.left = '0px';
+    offsetCamera = 0;
+    
+    console.log('🎮 FASE CARREGADA - SPRITE NA POSIÇÃO X:', jogador.x, 'Y:', jogador.y);
 }
 
 function atualizarCamera() {
     const wrapper = document.getElementById('cenarioWrapper');
-    if(wrapper) {
-        // CALCULAR O OFFSET DA CÂMERA (JOGADOR SEMPRE NO CENTRO)
-        // QUEREMOS QUE O JOGADOR FIQUE POR VOLTA DE 200px DA ESQUERDA
+    if(wrapper && !morto) {
         const cameraTarget = jogador.x - 200;
         
-        // LIMITAR PARA NÃO MOSTRAR FORA DO CENÁRIO
-        offsetCamera = Math.max(0, Math.min(cameraTarget, larguraTotalFase - 400));
+        if(cameraTarget < 0) {
+            offsetCamera = 0;
+        } else if(cameraTarget > larguraTotalFase - 400) {
+            offsetCamera = larguraTotalFase - 400;
+        } else {
+            offsetCamera = cameraTarget;
+        }
         
-        // APLICAR O OFFSET
         wrapper.style.left = -offsetCamera + 'px';
-        
-        // DEBUG
-        console.log('Jogador X:', jogador.x, 'Camera:', offsetCamera);
     }
 }
 
@@ -562,7 +624,11 @@ function atualizarJogo() {
     
     const fase = fases[faseAtual-1];
     
-    // MOVIMENTO
+    // GUARDAR POSIÇÃO ANTIGA PRA DEBUG
+    const xAntigo = jogador.x;
+    const yAntigo = jogador.y;
+    
+    // MOVIMENTO HORIZONTAL DO JOGADOR REAL
     if(movimentoEsquerda && jogador.x > 10) {
         jogador.x -= 4;
     }
@@ -574,7 +640,7 @@ function atualizarJogo() {
     jogador.vy += 0.8;
     jogador.y += jogador.vy;
     
-    // COLISÃO
+    // COLISÃO COM PLATAFORMAS
     jogador.noChao = false;
     
     for(let p of fase.plataformas) {
@@ -603,7 +669,7 @@ function atualizarJogo() {
         return;
     }
     
-    // CORAÇÃO
+    // CORAÇÃO FINAL
     if(Math.abs(jogador.x - fase.coracao.x) < 40 &&
        Math.abs(jogador.y - fase.coracao.y) < 40) {
         pontos += 100;
@@ -623,13 +689,46 @@ function atualizarJogo() {
     // ATUALIZAR CÂMERA
     atualizarCamera();
     
-    // ATUALIZAR POSIÇÃO JOGADOR
+    // ATUALIZAR POSIÇÃO DO SPRITE
     const jogadorEl = document.getElementById('jogador');
     if(jogadorEl) {
-        jogadorEl.style.bottom = (cenario.clientHeight - jogador.y - jogador.altura) + 'px';
+        // ATUALIZAR POSIÇÃO HORIZONTAL (AGORA FUNCIONA!)
+        jogadorEl.style.left = jogador.x + 'px';
+        
+        // ATUALIZAR POSIÇÃO VERTICAL
+        const novoBottom = cenario.clientHeight - jogador.y - jogador.altura;
+        jogadorEl.style.bottom = novoBottom + 'px';
+        
+        // EFEITOS VISUAIS
+        if(movimentoEsquerda || movimentoDireita) {
+            jogadorEl.style.backgroundColor = '#ff3388';
+            jogadorEl.style.transform = 'scaleX(0.95)';
+            jogadorEl.style.borderColor = 'white';
+            
+            // SE TIVER NO INÍCIO DA FASE, DESTACAR AINDA MAIS
+            if(jogador.x < 200) {
+                jogadorEl.style.boxShadow = '0 0 40px #ff3388, 0 5px 0 #b3456b';
+            }
+        } else {
+            jogadorEl.style.backgroundColor = '#ff6b9d';
+            jogadorEl.style.transform = 'scaleX(1)';
+            jogadorEl.style.borderColor = '#ffd966';
+            jogadorEl.style.boxShadow = '0 0 30px #ff6b9d, 0 5px 0 #b3456b';
+        }
+        
+        // DEBUG - MOSTRA QUANDO ANDA
+        if(xAntigo !== jogador.x) {
+            console.log(`📍 SPRITE ANDOU: ${xAntigo} → ${jogador.x}px`);
+        }
+        if(yAntigo !== jogador.y) {
+            console.log(`📏 SPRITE VERTICAL: ${yAntigo} → ${jogador.y}px`);
+        }
+    } else {
+        console.error('❌ SPRITE NÃO ENCONTRADO!');
     }
 }
 
+// LOOP PRINCIPAL (30 FPS)
 setInterval(atualizarJogo, 33);
 
-console.log('JOGO CARREGADO COM CÂMERA!');
+console.log('🔥 JOGO INICIADO - SPRITE VAI ANDAR HORIZONTALMENTE!');
