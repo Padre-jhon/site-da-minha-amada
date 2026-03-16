@@ -1,13 +1,22 @@
-// ========== BLOQUEAR MENUS ==========
-document.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-    return false;
+// ========== BLOQUEAR MENU APENAS NOS BOTÕES DE CONTROLE ==========
+const botoesControle = ['btnEsquerda', 'btnDireita', 'btnPular'];
+
+botoesControle.forEach(id => {
+    const btn = document.getElementById(id);
+    if(btn) {
+        btn.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        });
+        
+        btn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+    }
 });
 
-document.addEventListener('selectstart', (e) => {
-    e.preventDefault();
-    return false;
-});
+// NÃO BLOQUEAR NOS BOTÕES DE NAVEGAÇÃO!
+// Deixar btnJogar, btnReiniciar, etc funcionando normalmente
 
 // CONFIGURAÇÕES
 let faseAtual = 1;
@@ -29,7 +38,7 @@ let movimentoDireita = false;
 let morto = false;
 let notas = [];
 
-// FASES (MESMO CÓDIGO)
+// FASES
 const fases = [
     {
         plataformas: [
@@ -183,7 +192,7 @@ document.addEventListener('click', () => {
     }
 }, { once: true });
 
-// ========== BOTÕES DE NAVEGAÇÃO ==========
+// ========== BOTÕES DE NAVEGAÇÃO (SEM BLOQUEIO) ==========
 document.getElementById('btnJogar').addEventListener('click', (e) => {
     e.preventDefault();
     telaInicial.style.display = 'none';
@@ -216,18 +225,32 @@ document.getElementById('btnTentarNovamente').addEventListener('click', (e) => {
     vidas = 3;
 });
 
-// ========== BOTÕES DE CONTROLE ==========
+// ========== BOTÕES DE CONTROLE (COM BLOQUEIO) ==========
 const btnEsquerda = document.getElementById('btnEsquerda');
 const btnDireita = document.getElementById('btnDireita');
 const btnPular = document.getElementById('btnPular');
 
-// BLOQUEAR MENU NOS BOTÕES
-[btnEsquerda, btnDireita, btnPular].forEach(btn => {
-    btn.addEventListener('contextmenu', (e) => {
+// BLOQUEAR MENU SÓ NOS BOTÕES DE CONTROLE
+if(btnEsquerda) {
+    btnEsquerda.addEventListener('contextmenu', (e) => {
         e.preventDefault();
         return false;
     });
-});
+}
+
+if(btnDireita) {
+    btnDireita.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        return false;
+    });
+}
+
+if(btnPular) {
+    btnPular.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        return false;
+    });
+}
 
 // ESQUERDA
 function esquerdaPressionar(e) {
@@ -240,12 +263,14 @@ function esquerdaSoltar(e) {
     movimentoEsquerda = false;
 }
 
-btnEsquerda.addEventListener('mousedown', esquerdaPressionar);
-btnEsquerda.addEventListener('mouseup', esquerdaSoltar);
-btnEsquerda.addEventListener('mouseleave', esquerdaSoltar);
-btnEsquerda.addEventListener('touchstart', esquerdaPressionar, { passive: false });
-btnEsquerda.addEventListener('touchend', esquerdaSoltar, { passive: false });
-btnEsquerda.addEventListener('touchcancel', esquerdaSoltar, { passive: false });
+if(btnEsquerda) {
+    btnEsquerda.addEventListener('mousedown', esquerdaPressionar);
+    btnEsquerda.addEventListener('mouseup', esquerdaSoltar);
+    btnEsquerda.addEventListener('mouseleave', esquerdaSoltar);
+    btnEsquerda.addEventListener('touchstart', esquerdaPressionar, { passive: false });
+    btnEsquerda.addEventListener('touchend', esquerdaSoltar, { passive: false });
+    btnEsquerda.addEventListener('touchcancel', esquerdaSoltar, { passive: false });
+}
 
 // DIREITA
 function direitaPressionar(e) {
@@ -258,12 +283,14 @@ function direitaSoltar(e) {
     movimentoDireita = false;
 }
 
-btnDireita.addEventListener('mousedown', direitaPressionar);
-btnDireita.addEventListener('mouseup', direitaSoltar);
-btnDireita.addEventListener('mouseleave', direitaSoltar);
-btnDireita.addEventListener('touchstart', direitaPressionar, { passive: false });
-btnDireita.addEventListener('touchend', direitaSoltar, { passive: false });
-btnDireita.addEventListener('touchcancel', direitaSoltar, { passive: false });
+if(btnDireita) {
+    btnDireita.addEventListener('mousedown', direitaPressionar);
+    btnDireita.addEventListener('mouseup', direitaSoltar);
+    btnDireita.addEventListener('mouseleave', direitaSoltar);
+    btnDireita.addEventListener('touchstart', direitaPressionar, { passive: false });
+    btnDireita.addEventListener('touchend', direitaSoltar, { passive: false });
+    btnDireita.addEventListener('touchcancel', direitaSoltar, { passive: false });
+}
 
 // ===== PULO =====
 let indicadorCarga = null;
@@ -277,26 +304,6 @@ function criarIndicador() {
     indicadorCarga = document.createElement('div');
     indicadorCarga.classList.add('indicador-carga-simples');
     indicadorCarga.id = 'indicadorCarga';
-    indicadorCarga.style.position = 'fixed';
-    indicadorCarga.style.bottom = '120px';
-    indicadorCarga.style.left = '50%';
-    indicadorCarga.style.transform = 'translateX(-50%)';
-    indicadorCarga.style.width = '250px';
-    indicadorCarga.style.height = '25px';
-    indicadorCarga.style.backgroundColor = '#222';
-    indicadorCarga.style.border = '4px solid #ffd966';
-    indicadorCarga.style.borderRadius = '30px';
-    indicadorCarga.style.overflow = 'hidden';
-    indicadorCarga.style.zIndex = '9999';
-    indicadorCarga.style.boxShadow = '0 0 30px rgba(255, 217, 102, 0.5)';
-    
-    const barra = document.createElement('div');
-    barra.id = 'barraCarga';
-    barra.style.height = '100%';
-    barra.style.width = '0%';
-    barra.style.transition = 'width 0.05s linear';
-    
-    indicadorCarga.appendChild(barra);
     document.body.appendChild(indicadorCarga);
 }
 
@@ -346,18 +353,14 @@ function puloSoltar(e) {
     }
 }
 
-btnPular.addEventListener('mousedown', puloPressionar);
-btnPular.addEventListener('mouseup', puloSoltar);
-btnPular.addEventListener('mouseleave', puloSoltar);
-btnPular.addEventListener('touchstart', puloPressionar, { passive: false });
-btnPular.addEventListener('touchend', puloSoltar, { passive: false });
-btnPular.addEventListener('touchcancel', puloSoltar, { passive: false });
-
-// IMPEDIR CLIQUE PADRÃO
-document.querySelectorAll('button').forEach(btn => {
-    btn.addEventListener('click', (e) => e.preventDefault());
-    btn.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
-});
+if(btnPular) {
+    btnPular.addEventListener('mousedown', puloPressionar);
+    btnPular.addEventListener('mouseup', puloSoltar);
+    btnPular.addEventListener('mouseleave', puloSoltar);
+    btnPular.addEventListener('touchstart', puloPressionar, { passive: false });
+    btnPular.addEventListener('touchend', puloSoltar, { passive: false });
+    btnPular.addEventListener('touchcancel', puloSoltar, { passive: false });
+}
 
 // LOOP DE CARREGAMENTO
 setInterval(() => {
