@@ -450,3 +450,216 @@ body {
         font-size: 1.4rem;
     }
 }
+/* ===== INDICADOR DE INSTRUMENTOS CLICÁVEIS ===== */
+.instrumentos-titulo {
+    text-align: center;
+    margin: 40px 0 20px;
+    position: relative;
+}
+
+.instrumentos-titulo h2 {
+    color: #ffd966;
+    font-size: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.instrumentos-titulo .clique-indicador {
+    font-size: 1rem;
+    background: rgba(255, 107, 157, 0.3);
+    padding: 8px 20px;
+    border-radius: 60px;
+    border: 2px solid #ffd966;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    animation: pulseIndicador 2s infinite;
+}
+
+@keyframes pulseIndicador {
+    0%, 100% {
+        transform: scale(1);
+        background: rgba(255, 107, 157, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        background: rgba(255, 107, 157, 0.6);
+        box-shadow: 0 0 20px #ff6b9d;
+    }
+}
+
+/* CARDS DE INSTRUMENTOS */
+.instruments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin: 30px 0;
+}
+
+.instrument-card {
+    background: #0f4a52;
+    border-radius: 30px;
+    padding: 30px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 2px solid #30838c;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+/* INDICADOR DE CLIQUE NO CARD */
+.instrument-card::before {
+    content: '👆 CLIQUE AQUI';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ff6b9d;
+    color: white;
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    border-radius: 30px;
+    border: 2px solid #ffd966;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    font-weight: bold;
+    box-shadow: 0 0 15px #ff6b9d;
+    z-index: 10;
+}
+
+.instrument-card:hover::before {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ONDA SONORA ANIMADA */
+.instrument-card::after {
+    content: '🎵';
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    font-size: 1.5rem;
+    opacity: 0.3;
+    animation: ondaSonora 2s infinite;
+}
+
+@keyframes ondaSonora {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.3;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+        color: #ffd966;
+    }
+}
+
+.instrument-card:hover {
+    transform: translateY(-10px);
+    border-color: #ffd966;
+    box-shadow: 0 15px 30px rgba(255, 217, 102, 0.3);
+    background: #14656f;
+}
+
+.instrument-card:active {
+    transform: scale(0.95);
+}
+
+.instrument-icon {
+    font-size: 5rem;
+    margin-bottom: 15px;
+    filter: drop-shadow(2px 4px 6px black);
+    transition: all 0.2s ease;
+}
+
+.instrument-card:active .instrument-icon {
+    transform: scale(1.1);
+}
+
+.instrument-card h3 {
+    font-size: 2rem;
+    color: #ffd966;
+    margin-bottom: 10px;
+}
+
+.instrument-card p {
+    color: #cceff5;
+    font-size: 1.1rem;
+}
+
+/* ÍCONE DE SOM */
+.sound-icon {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 1.2rem;
+    animation: soundWaves 1.5s infinite;
+}
+
+@keyframes soundWaves {
+    0%, 100% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+        color: #ffd966;
+    }
+}
+
+/* BOTÃO FLUTUANTE DE ÁUDIO (OPCIONAL) */
+.audio-hint {
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255, 107, 157, 0.2);
+    border-radius: 60px;
+    border: 2px dashed #ffd966;
+}
+
+.audio-hint p {
+    color: white;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.audio-hint span {
+    background: #1a5c64;
+    padding: 8px 20px;
+    border-radius: 40px;
+    border: 2px solid #ffd966;
+    animation: pulseIndicador 2s infinite;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 600px) {
+    .instrumentos-titulo h2 {
+        font-size: 1.8rem;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .instrument-card::before {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+    
+    .instrument-icon {
+        font-size: 4rem;
+    }
+    
+    .instrument-card h3 {
+        font-size: 1.6rem;
+    }
+}

@@ -121,6 +121,21 @@ function criarNotasFlutuantes(instrumento) {
     }
 }
 
+
+// DESTAQUE PARA PRIMEIRO CLIQUE
+let primeiroClique = true;
+
+document.querySelectorAll('.instrument-card').forEach(card => {
+    card.addEventListener('click', function() {
+        if(primeiroClique) {
+            primeiroClique = false;
+            // REMOVER INDICADORES APÓS PRIMEIRO CLIQUE
+            document.querySelector('.clique-indicador').style.animation = 'none';
+            document.querySelector('.clique-indicador').style.opacity = '0.5';
+        }
+    });
+});
+
 // CSS extra para animação das notas
 const style = document.createElement('style');
 style.textContent = `
